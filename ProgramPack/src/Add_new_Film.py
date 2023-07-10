@@ -31,47 +31,42 @@ class new_Film(MyWindowFormat):
         # self.setStyleSheet("background-image: url(../img/popcorn4.png);")
 
         # Створення кнопок і додавання їх до контейнера
-        central_widget = QWidget()
-        #layout = QHBoxLayout(central_widget)
-        #layout.setSpacing(10)
-        self.setCentralWidget(central_widget)
-
-        # Створення кнопок і додавання їх до контейнера
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
-        button1 = MyButton()
-        button2 = MyButton()
-        button3 = MyButton()
+        button1 = MyButton(self)
+        button2 = MyButton(self)
+        button3 = MyButton(self)
 
         button1.setText("Назад")
         button1.setFont(font)
-        #button1.setGeometry(100, 10, 20, 70)
-        button1.setFixedSize(450, 70)
-        #button1.start_animation()
-        #button1.move(100, 100)
+        button1.setFixedSize(400, 70)
+        button1.start_animation()
+        button1.move(300, 400)
         button1.clicked.connect(self.open_main_Window)
 
         button2.setText("Новий переглянутий фільм")
         button2.setFont(font)
-        button2.setFixedSize(450, 70)
-        #button2.start_animation()
-        #button2.move(300, 100)
-        button2.clicked.connect(self.open_main_Window)
+        button2.setFixedSize(400, 70)
+        button2.start_animation()
+        button2.move(45, 200)
+        button2.clicked.connect(self.open_New_WatchedFilm)
 
         button3.setText("'Переглянути потім...'")
         button3.setFont(font)
         button3.setFixedSize(450, 70)
-        #button3.start_animation()
-        #button3.move(200, 200)
+        button3.start_animation()
+        button3.move(510, 200)
         button3.clicked.connect(self.open_main_Window)
 
-        central_widget.add
-        #layout.addWidget(button1)
-        #layout.addWidget(button2)
-        #layout.addWidget(button3)
     def open_main_Window(self):
         from ProgramPack.src.MainWindow import _MainWindow
         self.main_Window = _MainWindow()
         self.main_Window.show()
+        self.close()
+
+    def open_New_WatchedFilm(self):
+        from ProgramPack.src.New_Watched_Film import _new_Watched_Film
+        self.watched_film = _new_Watched_Film()
+        self.watched_film.show()
         self.close()

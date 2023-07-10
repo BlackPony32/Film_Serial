@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QDesktopWidget, QLabel, QApplication
+from PyQt5.QtWidgets import QDesktopWidget, QLabel, QApplication
 from PyQt5.QtGui import QFont, QPixmap
 from MyButton import MyButton
 from MyWindowFormat import MyWindowFormat
-from ProgramPack.src.Add_new_Film import new_Film
 
 
 class _MainWindow(MyWindowFormat):
@@ -30,50 +29,48 @@ class _MainWindow(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        # self.setStyleSheet("background-image: url(../img/popcorn4.png);")
-        # Створення контейнера
-        central_widget = QWidget()
-        layout = QVBoxLayout(central_widget)
-        layout.setSpacing(8)
-        self.setCentralWidget(central_widget)
+        self.setStyleSheet("background-image: url(../img/popcorn4.png);")
 
         # Створення кнопок і додавання їх до контейнера
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
-        button1 = MyButton()
+        button1 = MyButton(self)
 
-        button1.setText("Button 1")
+        button1.setText("Додати новий фільм")
         button1.setFont(font)
         button1.setFixedSize(450, 70)
         button1.start_animation()
+        button1.move(20,100)
         button1.clicked.connect(self.open_new_Film)
 
-        button2 = MyButton()
+        button2 = MyButton(self)
         button2.setText("Button 2")
         button2.setFont(font)
         button2.setFixedSize(450, 70)
         button2.start_animation()
-        button3 = MyButton()
+        button2.move(20, 200)
+
+        button3 = MyButton(self)
         button3.setText("Button 3")
         button3.setFont(font)
         button3.setFixedSize(450, 70)
         button3.start_animation()
-        button4 = MyButton()
+        button3.move(20, 300)
+
+        button4 = MyButton(self)
         button4.setText("Button 4")
         button4.setFont(font)
         button4.setFixedSize(450, 70)
-        button5 = MyButton()
+        button4.move(20, 400)
+
+        button5 = MyButton(self)
         button5.setText("Button 5")
         button5.setFont(font)
         button5.setFixedSize(450, 70)
-
-        layout.addWidget(button1)
-        layout.addWidget(button2)
-        layout.addWidget(button3)
-        layout.addWidget(button4)
-        layout.addWidget(button5)
+        button5.move(20, 500)
 
     def open_new_Film(self):
+        from ProgramPack.src.Add_new_Film import new_Film
         self.new_film_window = new_Film()
         self.new_film_window.show()
         self.close()
