@@ -50,23 +50,32 @@ class new_Film(MyWindowFormat):
         button2.setFixedSize(400, 70)
         button2.start_animation()
         button2.move(45, 200)
-        button2.clicked.connect(self.open_New_WatchedFilm)
+        button2.clicked.connect(self.add_New_WatchedFilm)
 
         button3.setText("'Переглянути потім...'")
         button3.setFont(font)
         button3.setFixedSize(450, 70)
         button3.start_animation()
         button3.move(510, 200)
-        button3.clicked.connect(self.open_main_Window)
+        button3.clicked.connect(self.add_Film_later)
 
+    # назад на головне вікно
     def open_main_Window(self):
         from ProgramPack.src.MainWindow import _MainWindow
         self.main_Window = _MainWindow()
         self.main_Window.show()
         self.close()
 
-    def open_New_WatchedFilm(self):
+    # додати новий переглянутий фільм
+    def add_New_WatchedFilm(self):
         from ProgramPack.src.New_Watched_Film import _new_Watched_Film
         self.watched_film = _new_Watched_Film()
         self.watched_film.show()
+        self.close()
+
+    # додати фільм переглянути потім
+    def add_Film_later(self):
+        from ProgramPack.src.watch_Film_later import _new_Film_later
+        self._new_Film_later = _new_Film_later()
+        self._new_Film_later.show()
         self.close()
