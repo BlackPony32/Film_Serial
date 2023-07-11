@@ -33,29 +33,21 @@ class _new_Watched_Film(MyWindowFormat):
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
         button1 = MyButton(self)
-        button2 = MyButton(self)
-        button3 = MyButton(self)
+        button2= MyButton(self)
 
         button1.setText("Назад")
         button1.setFont(font)
         button1.setFixedSize(450, 70)
         button1.start_animation()
-        button1.move(300, 400)
+        button1.move(45, 600)
         button1.clicked.connect(self.open_newFilm)
 
-        button2.setText("Новий переглянутий фільм")
+        button2.setText("Додати фільм")
         button2.setFont(font)
         button2.setFixedSize(450, 70)
         button2.start_animation()
-        button2.move(45, 200)
+        button2.move(510, 600)
         button2.clicked.connect(self.open_newFilm)
-
-        button3.setText("'Переглянути потім...'")
-        button3.setFont(font)
-        button3.setFixedSize(450, 70)
-        button3.start_animation()
-        button3.move(510, 200)
-        button3.clicked.connect(self.open_newFilm)
 
     def open_newFilm(self):
         from ProgramPack.src.Add_new_Film import new_Film
