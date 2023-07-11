@@ -41,14 +41,15 @@ class _MainWindow(MyWindowFormat):
         button1.setFixedSize(450, 70)
         button1.start_animation()
         button1.move(20,100)
-        button1.clicked.connect(self.open_new_Film)
+        button1.clicked.connect(self.add_new_Film)
 
         button2 = MyButton(self)
-        button2.setText("Button 2")
+        button2.setText("Додати новий серіал")
         button2.setFont(font)
         button2.setFixedSize(450, 70)
         button2.start_animation()
         button2.move(20, 200)
+        button2.clicked.connect(self.add_new_Series)
 
         button3 = MyButton(self)
         button3.setText("Button 3")
@@ -69,8 +70,14 @@ class _MainWindow(MyWindowFormat):
         button5.setFixedSize(450, 70)
         button5.move(20, 500)
 
-    def open_new_Film(self):
+    def add_new_Film(self):
         from ProgramPack.src.Add_new_Film import new_Film
         self.new_film_window = new_Film()
         self.new_film_window.show()
+        self.close()
+
+    def add_new_Series(self):
+        from ProgramPack.src.Add_new_Series import new_Series
+        self.new_series_window = new_Series()
+        self.new_series_window.show()
         self.close()
