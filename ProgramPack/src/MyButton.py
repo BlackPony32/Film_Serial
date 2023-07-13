@@ -4,11 +4,11 @@ from PyQt5.QtGui import QPainter, QColor, QPen, QBrush, QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt, QTimer, QPropertyAnimation
 from PyQt5.QtGui import QPainter, QColor, QPen, QBrush, QFont, QPainterPath
-
+from PyQt5.QtWidgets import QPushButton
 
 class MyButton(QPushButton):
-    def __init__(self, text):
-        super().__init__(text)
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         # Встановлюємо стилі кнопки
         self.setStyleSheet(
@@ -39,7 +39,7 @@ class MyButton(QPushButton):
         # Запускаємо анімацію через 3 секунди
         self.timer = QTimer()
         self.timer.timeout.connect(self.start_animation)
-        self.timer.start(100)
+        self.timer.start(1000)
 
 
 
@@ -60,14 +60,14 @@ class MyButton(QPushButton):
         if self.isDown():
             painter.setPen(QPen(QColor(0, 255, 0), 2))
         else:
-            painter.setPen(QPen(self.current_color, 2))
+            painter.setPen(QPen(self.current_color, 3))
 
-        painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), 10, 10)
+        painter.drawRoundedRect(rect.adjusted(2, 2, -2, -2), 15, 15)
 
         # Встановлюємо фон тексту
         painter.setPen(QColor(255, 255, 0))
         painter.setBrush(QBrush(QColor(47, 47, 47)))
-        painter.drawRect(rect.adjusted(10, 10, -10, -10))
+        painter.drawRect(rect.adjusted(20, 20, -20, -20))
 
         super().paintEvent(event)
 

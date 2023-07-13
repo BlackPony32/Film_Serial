@@ -1,4 +1,5 @@
 # Файл __init__.py для пакету ProgramPack
+from ProgramPack.src.CustomLabelLine import CustomLabelLineEdit
 from ProgramPack.src.MainWindow import _MainWindow
 from ProgramPack.src.Add_new_Film import new_Film
 from ProgramPack.src.Add_new_Series import new_Series
