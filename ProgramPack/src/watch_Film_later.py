@@ -13,7 +13,6 @@ class _new_Film_later(MyWindowFormat):
         self.setWindowTitle("Переглянути фільм пізніше")
         self.setGeometry(0, 0, 1000, 700)
 
-
         self.center()
         self.initialize()
 
@@ -30,7 +29,7 @@ class _new_Film_later(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        #self.setStyleSheet("background-image: url(../img/light_cinema.png);")
+        #self.setStyleSheet("background-image: url(../img/cinema1.png);")
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
@@ -50,7 +49,6 @@ class _new_Film_later(MyWindowFormat):
         button2.start_animation()
         button2.move(510, 600)
         button2.clicked.connect(self.open_newSeries)
-
         #
         label0 = QLabel(self)
         labelAnec = QPlainTextEdit(self)
@@ -74,7 +72,7 @@ class _new_Film_later(MyWindowFormat):
         #layout = QFormLayout()
         line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
-        line_edit2 = QLineEdit(self)
+        #line_edit2 = QLineEdit(self)
         label2 = QLabel(self)
         line_edit3 = QLineEdit(self)
         label3 = QLabel(self)
@@ -89,43 +87,29 @@ class _new_Film_later(MyWindowFormat):
         line_edit1.setFont(QFont("Arial", 13))
         line_edit1.setStyleSheet("background-color: #F0F0F0")
         line_edit1.setFixedSize(350, 30)
-        line_edit1.move(250, 200)
+        line_edit1.move(270, 200)
 
         label2.setFont(QFont("Arial", 17))
         label2.setStyleSheet("color: blue")
         label2.setText("Оберіть дату додавання фільма")
-        label2.setFixedSize(550, 30)
+        label2.setFixedSize(570, 30)
         label2.move(45, 255)
         #____________________________________________________________________________
-        '''
-        line_edit2.setPlaceholderText("Оберіть дату додавання фільма")
-        line_edit2.setFont(QFont("Arial", 13))
-        line_edit2.setStyleSheet("background-color: #F0F0F0")
-        line_edit2.setFixedSize(350, 30)
-        line_edit2.move(250, 255)
-        '''
-        
+
         self.labelDate = QLabel(self)
         self.labelDate.setFont(QFont("Arial", 17))
         self.labelDate.setStyleSheet("background-color: transparent")  # Set transparent background
         self.current_date = QDate.currentDate()
-        self.labelDate.setText(self.current_date.toString("dd.MM.yyyy"))
         self.labelDate.setFixedSize(200, 50)
         self.labelDate.move(300, 310)
 
-
-        buttonDate = MyButton(self)
-        buttonDate.setText("Дата додавання")
-        buttonDate.setFont(font)
-        buttonDate.setFixedSize(250, 45)
-        buttonDate.start_animation()
-        buttonDate.move(45, 310)
-        buttonDate.clicked.connect(self.show_calendar)
-
-
-
-        #self.update_label()
-
+        self.buttonDate = MyButton(self)
+        self.buttonDate.setText("Дата додавання")
+        self.buttonDate.setFont(font)
+        self.buttonDate.setFixedSize(250, 55)
+        self.buttonDate.start_animation()
+        self.buttonDate.move(45, 310)
+        self.buttonDate.clicked.connect(self.buttonDateClicked)
         #___________________________________________________________________
         label3.setFont(QFont("Arial", 17))
         label3.setStyleSheet("color: blue")
@@ -134,12 +118,10 @@ class _new_Film_later(MyWindowFormat):
         label3.move(45, 370)
 
         line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        line_edit3.setFont(QFont("Arial", 13))
+        line_edit3.setFont(QFont("Arial", 9)) #13 норм розмір
         line_edit3.setStyleSheet("background-color: #F0F0F0")
         line_edit3.setFixedSize(350, 30)
-        line_edit3.move(250, 370)
-
-
+        line_edit3.move(270, 370)
 
     def open_newSeries(self):
         from ProgramPack.src.Add_new_Film import new_Film
@@ -147,25 +129,11 @@ class _new_Film_later(MyWindowFormat):
         self.newFilm.show()
         self.close()
 
-
-
-    def generate_random_anecdote(self):
-        import json
-        import random
-        # Відкриття JSON-файлу та завантаження анекдотів
-        with open('Filmanecdotes.json', 'r', encoding='utf-8') as file:
-            anecdotes = json.load(file)
-
-        # Вибір випадкового анекдота
-        random_anecdote = random.choice(anecdotes)
-
-        return random_anecdote['text']
-
     def show_calendar(self):
         try:
             self.calendar = QCalendarWidget()
             self.calendar.setWindowModality(Qt.ApplicationModal)
-            self.calendar.selectionChanged.connect(self.select_date)
+            self.calendar.clicked.connect(self.select_date)
 
             self.widget = QWidget()
             layout = QVBoxLayout()
@@ -177,9 +145,8 @@ class _new_Film_later(MyWindowFormat):
             print("Exception in show_calendar:", e)
             QMessageBox.critical(self, "Error", "An error occurred while opening the calendar.")
 
-    def select_date(self):
+    def select_date(self, date):
         try:
-            date = self.calendar.selectedDate()
             self.current_date = date
             self.update_label()
             self.widget.close()
@@ -194,4 +161,19 @@ class _new_Film_later(MyWindowFormat):
             print("Exception in update_label:", e)
             QMessageBox.critical(self, "Error", "An error occurred while updating the label.")
 
+    def buttonDateClicked(self):
+        if self.buttonDate.isEnabled():
+            self.show_calendar()
+            self.update_label()
 
+    def generate_random_anecdote(self):
+        import json
+        import random
+        # Відкриття JSON-файлу та завантаження анекдотів
+        with open('Filmanecdotes.json', 'r', encoding='utf-8') as file:
+            anecdotes = json.load(file)
+
+        # Вибір випадкового анекдота
+        random_anecdote = random.choice(anecdotes)
+
+        return random_anecdote['text']
