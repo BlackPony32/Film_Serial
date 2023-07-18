@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QFormLayout, \
-    QLineEdit, QPlainTextEdit, QCalendarWidget, QMessageBox
-from PyQt5.QtGui import QFont, QPixmap
-from MyButton import MyButton
-from MyWindowFormat import MyWindowFormat
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineEdit, QPlainTextEdit, QCalendarWidget, QMessageBox
+from PyQt5.QtGui import QFont
+from ProgramPack.src.MyButton import _MyButton
+from ProgramPack.src.MyWindowFormat import MyWindowFormat
 from PyQt5.QtCore import QDate, Qt
 
 
@@ -17,7 +16,7 @@ class _new_Film_later(MyWindowFormat):
         self.initialize()
 
     def paintEvent(self, event):
-        for button in self.findChildren(MyButton):  # Отримати всі кнопки MyButton
+        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
             button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
 
         super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
@@ -33,8 +32,8 @@ class _new_Film_later(MyWindowFormat):
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
-        button1 = MyButton(self)
-        button2 = MyButton(self)
+        button1 = _MyButton(self)
+        button2 = _MyButton(self)
 
         button1.setText("Назад")
         button1.setFont(font)
@@ -103,7 +102,7 @@ class _new_Film_later(MyWindowFormat):
         self.labelDate.setFixedSize(200, 50)
         self.labelDate.move(300, 310)
 
-        self.buttonDate = MyButton(self)
+        self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання")
         self.buttonDate.setFont(font)
         self.buttonDate.setFixedSize(250, 55)
@@ -124,7 +123,7 @@ class _new_Film_later(MyWindowFormat):
         line_edit3.move(270, 370)
 
     def open_newSeries(self):
-        from ProgramPack.src.Add_new_Film import new_Film
+        from ProgramPack.Movies_module.Add_new_Film import new_Film
         self.newFilm = new_Film()
         self.newFilm.show()
         self.close()
@@ -170,7 +169,7 @@ class _new_Film_later(MyWindowFormat):
         import json
         import random
         # Відкриття JSON-файлу та завантаження анекдотів
-        with open('Filmanecdotes.json', 'r', encoding='utf-8') as file:
+        with open('../data/Filmanecdotes.json', 'r', encoding='utf-8') as file:
             anecdotes = json.load(file)
 
         # Вибір випадкового анекдота
