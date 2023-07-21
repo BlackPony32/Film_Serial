@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QDesktopWidget
 from PyQt5.QtGui import QFont
 from ProgramPack.src.MyButton import _MyButton
 from ProgramPack.src.MyWindowFormat import MyWindowFormat
-#from ProgramPack.data.MainWindow import _MainWindow
+#from ProgramPack.my_data.MainWindow import _MainWindow
 
 
 class _FilmWatchedOrlaterList(MyWindowFormat):
@@ -41,21 +41,21 @@ class _FilmWatchedOrlaterList(MyWindowFormat):
         button1.setText("Назад")
         button1.setFont(font)
         button1.setFixedSize(400, 70)
-        button1.start_animation()
+        #button1.start_animation()
         button1.move(300, 400)
         button1.clicked.connect(self.open_main_Window)
 
         button2.setText("Список переглянутих фільмів")
         button2.setFont(font)
         button2.setFixedSize(400, 70)
-        button2.start_animation()
+        #button2.start_animation()
         button2.move(45, 200)
         button2.clicked.connect(self.open_New_WatchedFilm)
 
         button3.setText("Список фільмів 'Переглянути потім...'")
         button3.setFont(font)
         button3.setFixedSize(450, 70)
-        button3.start_animation()
+        #button3.start_animation()
         button3.move(510, 200)
         button3.clicked.connect(self.open_main_Window)
 
