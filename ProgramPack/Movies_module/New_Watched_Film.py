@@ -1,13 +1,13 @@
 import json
 import os
 
-from PyQt5.QtCore import Qt, QDate, QFileSystemWatcher
+from PyQt5.QtCore import Qt, QDate, QFileSystemWatcher, QFile, QTextStream
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineEdit, \
     QMessageBox, QCalendarWidget, QPlainTextEdit
 from PyQt5.QtGui import QFont
 from ProgramPack.src.MyButton import _MyButton
 from ProgramPack.src.MyWindowFormat import MyWindowFormat
-
+import Image_resource_rc
 class _new_Watched_Film(MyWindowFormat):
     def __init__(self):
         super().__init__()
@@ -30,7 +30,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        #self.setStyleSheet("background-image: url(../img/light_cinema.png);")
+        self.setStyleSheet("background-image: url(:/light_cinema.png);")
         font = QFont()
         font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
 
@@ -40,14 +40,14 @@ class _new_Watched_Film(MyWindowFormat):
         button1.setText("Назад")
         button1.setFont(font)
         button1.setFixedSize(350, 60)
-        button1.start_animation()
+        #button1.start_animation()
         button1.move(45, 600)
         button1.clicked.connect(self.open_newFilm)
 
         button2.setText("Додати фільм")
         button2.setFont(font)
         button2.setFixedSize(350, 60)
-        button2.start_animation()
+        #button2.start_animation()
         button2.move(610, 600)
         button2.clicked.connect(self.open_newFilm)
 
@@ -108,7 +108,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.buttonDate.setText("Дата додавання")
         self.buttonDate.setFont(QFont("Arial", 14))
         self.buttonDate.setFixedSize(250, 45)
-        self.buttonDate.start_animation()
+        #self.buttonDate.start_animation()
         self.buttonDate.move(45, 205)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
         # ___________________________________________________________________
@@ -134,7 +134,7 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.line_edit4 = QPlainTextEdit(self)
         self.line_edit4.setPlaceholderText("Запишіть жанр фільма самостійно або оберіть з доступних")
-        self.file_name = "../data/data.txt"
+        self.file_name = ":/data.txt"
         self.file_path = os.path.join(os.getcwd(), self.file_name)
 
         self.file_watcher = QFileSystemWatcher()
@@ -153,7 +153,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.buttonGanre.setText("Доступні жанри")
         self.buttonGanre.setFont(QFont("Arial", 13))
         self.buttonGanre.setFixedSize(280, 55)
-        self.buttonGanre.start_animation()
+        #self.buttonGanre.start_animation()
         self.buttonGanre.move(45, 480)
         self.buttonGanre.clicked.connect(self.Genres_open)
 
@@ -167,7 +167,7 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.line_edit5 = QPlainTextEdit(self)
         self.line_edit5.setPlaceholderText("Запишіть оцінку фільма самостійно або скористайтесь запропонованою системою")
-        self.file_name1 = "../data/movie_rating_result.txt"
+        self.file_name1 = ":/movie_rating_result.txt"
         self.file_path1 = os.path.join(os.getcwd(), self.file_name1)
 
         self.file_watcher1 = QFileSystemWatcher()
@@ -183,7 +183,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.buttonRating.setText("Доступна система оцінювання")
         self.buttonRating.setFont(QFont("Arial", 9))
         self.buttonRating.setFixedSize(280, 55)
-        self.buttonRating.start_animation()
+        #self.buttonRating.start_animation()
         self.buttonRating.move(370, 480)
         self.buttonRating.clicked.connect(self.Rating_open)
 
@@ -199,7 +199,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.line_edit6 = QPlainTextEdit(self)
         self.line_edit6.setPlaceholderText(
             "Введіть доповнення до вікового рейтингу або оберіть доступну")
-        self.file_name2 = "../data/movie_age_rating.txt"
+        self.file_name2 = ":/movie_age_rating.txt"
         self.file_path2 = os.path.join(os.getcwd(), self.file_name2)
 
         self.file_watcher2 = QFileSystemWatcher()
@@ -215,7 +215,7 @@ class _new_Watched_Film(MyWindowFormat):
         self.buttonAge.setText("Доступна система рейтингу")
         self.buttonAge.setFont(QFont("Arial", 9))
         self.buttonAge.setFixedSize(280, 55)
-        self.buttonAge.start_animation()
+        #self.buttonAge.start_animation()
         self.buttonAge.move(690, 480)
         self.buttonAge.clicked.connect(self.Age_Rating_open)
 
@@ -271,15 +271,38 @@ class _new_Watched_Film(MyWindowFormat):
     def generate_random_anecdote(self):
         import json
         import random
+        import Image_resource_rc
+        resource_path = ":/jsons/Filmanecdotes.json"
+
+        # Open and read the resource using QFile and QTextStream
+        file = QFile(resource_path)
+        if file.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(file)
+            anecdotes = json.loads(stream.readAll())
+            file.close()
+            #print(json_data)
+        """
+        else:
+            print("Error opening the resource file.")
         # Відкриття JSON-файлу та завантаження анекдотів
-        with open('../data/Filmanecdotes.json', 'r', encoding='utf-8') as file:
-            anecdotes = json.load(file)
+        try:
+            file_path = ':/jsons/Filmanecdotes.json'
+            with open(file_path, 'r', encoding='utf-8') as file:
+                anecdotes = json.load(file)
+        except FileNotFoundError:
+            print("Файл не знайдено. Перевірте правильність шляху до файлу.")
+        except json.JSONDecodeError as e:
+            print(f"Помилка декодування JSON: {e}")
+        except Exception as e:
+            print(f"Сталася невідома помилка: {e}")
 
         # Вибір випадкового анекдота
+        """
         random_anecdote = random.choice(anecdotes)
 
         return random_anecdote['text']
-
+        #text = "ds"
+        #return text
     def open_newFilm(self):
         from ProgramPack.Movies_module.Add_new_Film import new_Film
         try:
@@ -307,7 +330,7 @@ class _new_Watched_Film(MyWindowFormat):
 
     def Genres_open(self):
         from ProgramPack.src.GenresWindow import GenreSelectionApp
-        with open("../data/Genres.json", "r", encoding='utf-8') as file:
+        with open(":/Genres.json", "r", encoding='utf-8') as file:
             genres_data = json.load(file)
             genres = genres_data["genres"]
 
