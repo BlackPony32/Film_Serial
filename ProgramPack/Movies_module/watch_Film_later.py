@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineE
 from PyQt5.QtGui import QFont
 from ProgramPack.src.MyButton import _MyButton
 from ProgramPack.src.MyWindowFormat import MyWindowFormat
-from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtCore import QDate, Qt, QFile, QTextStream
 
 
 class _new_Film_later(MyWindowFormat):
@@ -28,7 +28,9 @@ class _new_Film_later(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        #self.setStyleSheet("background-image: url(../img/cinema1.png);")
+        background_image = ":/images/light_cinema4.png"
+        # Set the background image using a style sheet
+        #self.setStyleSheet(f"background-image: url({background_image});")
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
@@ -37,90 +39,89 @@ class _new_Film_later(MyWindowFormat):
 
         button1.setText("Назад")
         button1.setFont(font)
-        button1.setFixedSize(450, 70)
-        button1.start_animation()
+        button1.setFixedSize(350, 60)
+        # button1.start_animation()
         button1.move(45, 600)
         button1.clicked.connect(self.open_newSeries)
 
         button2.setText("Додати фільм")
         button2.setFont(font)
-        button2.setFixedSize(450, 70)
-        button2.start_animation()
-        button2.move(510, 600)
+        button2.setFixedSize(350, 60)
+        # button2.start_animation()
+        button2.move(620, 600)
         button2.clicked.connect(self.open_newSeries)
-        #
+
+        # ___________________Лейбл про анегдот та поле для виводу випадкового анегдоту______________________________
         label0 = QLabel(self)
         labelAnec = QPlainTextEdit(self)
 
-        label0.setFont(QFont("Arial", 17))
+        label0.setFont(QFont("Arial", 15))
         label0.setStyleSheet("color: blue")
         label0.setText("Невеликий анегдот на тематику фільмів (згенеровано АІ)")
-        label0.setFixedSize(800, 30)
-        label0.move(10, 15)
+        label0.setFixedSize(795, 30)
+        label0.move(45, 15)
 
         self.generate_random_anecdote()
         random_joke = self.generate_random_anecdote()
 
-
-        labelAnec.setFont(QFont("Arial", 17))
+        labelAnec.setFont(QFont("Arial", 15))
         labelAnec.setStyleSheet("color: blue")
         labelAnec.setPlainText(random_joke)
-        labelAnec.setFixedSize(800, 140)
-        labelAnec.move(10, 45)
+        labelAnec.setFixedSize(930, 70)
+        labelAnec.move(45, 45)
 
-        #layout = QFormLayout()
+        # ______________Назва фільма і поле для вводу назви_________________
         line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
-        #line_edit2 = QLineEdit(self)
         label2 = QLabel(self)
-        line_edit3 = QLineEdit(self)
+        line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
 
-        label1.setFont(QFont("Arial", 17))
+        label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: blue")
         label1.setText("Назва фільма")
-        label1.setFixedSize(250, 30)
-        label1.move(45, 200)
+        label1.setFixedSize(200, 30)
+        label1.move(45, 120)
 
         line_edit1.setPlaceholderText("Введіть назву фільма")
         line_edit1.setFont(QFont("Arial", 13))
         line_edit1.setStyleSheet("background-color: #F0F0F0")
-        line_edit1.setFixedSize(350, 30)
-        line_edit1.move(270, 200)
+        line_edit1.setFixedSize(685, 30)
+        line_edit1.move(290, 120)
 
-        label2.setFont(QFont("Arial", 17))
+        label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: blue")
         label2.setText("Оберіть дату додавання фільма")
         label2.setFixedSize(570, 30)
-        label2.move(45, 255)
-        #____________________________________________________________________________
-
+        label2.move(45, 175)
+        # ___________________Блок дати додавання дати_____________________________________________
         self.labelDate = QLabel(self)
-        self.labelDate.setFont(QFont("Arial", 17))
+        self.labelDate.setFont(QFont("Arial", 15))
         self.labelDate.setStyleSheet("background-color: transparent")  # Set transparent background
         self.current_date = QDate.currentDate()
-        self.labelDate.setFixedSize(200, 50)
-        self.labelDate.move(300, 310)
+        # self.labelDate.setText(self.current_date.toString("dd.MM.yyyy")) #баг про накладання дат
+        self.labelDate.setFixedSize(200, 45)
+        self.labelDate.move(300, 205)
 
         self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання")
-        self.buttonDate.setFont(font)
-        self.buttonDate.setFixedSize(250, 55)
-        self.buttonDate.start_animation()
-        self.buttonDate.move(45, 310)
+        self.buttonDate.setFont(QFont("Arial", 14))
+        self.buttonDate.setFixedSize(250, 45)
+        # self.buttonDate.start_animation()
+        self.buttonDate.move(45, 205)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
-        #___________________________________________________________________
-        label3.setFont(QFont("Arial", 17))
+        # _______________________Блок опису фільма____________________________________________
+        label3.setFont(QFont("Arial", 15))
         label3.setStyleSheet("color: blue")
         label3.setText("Короткий опис")
         label3.setFixedSize(250, 30)
-        label3.move(45, 370)
+        label3.move(45, 265)
 
         line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        line_edit3.setFont(QFont("Arial", 9)) #13 норм розмір
+        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
         line_edit3.setStyleSheet("background-color: #F0F0F0")
-        line_edit3.setFixedSize(350, 30)
-        line_edit3.move(270, 370)
+        line_edit3.setFixedSize(700, 80)
+        line_edit3.move(270, 265)
 
     def open_newSeries(self):
         from ProgramPack.Movies_module.Add_new_Film import new_Film
@@ -168,11 +169,16 @@ class _new_Film_later(MyWindowFormat):
     def generate_random_anecdote(self):
         import json
         import random
-        # Відкриття JSON-файлу та завантаження анекдотів
-        with open('../data/Filmanecdotes.json', 'r', encoding='utf-8') as file:
-            anecdotes = json.load(file)
+        import Image_resource_rc
+        resource_path = ":/jsons/Filmanecdotes.json"
 
-        # Вибір випадкового анекдота
+        # Open and read the resource using QFile and QTextStream
+        file = QFile(resource_path)
+        if file.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(file)
+            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            anecdotes = json.loads(stream.readAll())
+            file.close()
         random_anecdote = random.choice(anecdotes)
 
         return random_anecdote['text']
