@@ -48,7 +48,7 @@ class _new_Watched_Series(MyWindowFormat):
         button1.move(45, 600)
         button1.clicked.connect(self.open_newSeries)
 
-        button2.setText("Додати фільм")
+        button2.setText("Додати серіал")
         button2.setFont(font)
         button2.setFixedSize(350, 60)
         # button2.start_animation()
@@ -59,6 +59,7 @@ class _new_Watched_Series(MyWindowFormat):
         line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
         label2 = QLabel(self)
+
         #line_edit3 = QPlainTextEdit(self)
         #label3 = QLabel(self)
 
@@ -96,7 +97,131 @@ class _new_Watched_Series(MyWindowFormat):
         # self.buttonDate.start_animation()
         self.buttonDate.move(45, 85)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
+        # ___________________Блок кількості сезонів_____________________________________________
+        self.label22 = QLabel(self)
+        self.label22.setFont(QFont("Arial", 15))
+        self.label22.setStyleSheet("color: blue")
+        self.label22.setText("Оберіть скільки сезонів в серіалі")
+        self.label22.setFixedSize(570, 30)
+        self.label22.move(555, 55)
 
+        self.labelCount = QLabel(self)
+        self.labelCount.setFont(QFont("Arial", 15))
+        self.labelCount.setStyleSheet("background-color: transparent")  # Set transparent background
+        self.labelCount.setFixedSize(200, 45)
+        self.labelCount.move(850, 85)
+
+        self.file_name40 = "Series_QuantitySeason.txt"
+        self.file_path40 = os.path.join(os.getcwd(), self.file_name40)
+
+        self.file_watcher40 = QFileSystemWatcher()
+        self.file_watcher40.addPath(self.file_path40)
+        self.file_watcher40.fileChanged.connect(self.update_labelCount)
+        self.update_labelCount()
+
+        self.buttonCount = _MyButton(self)
+        self.buttonCount.setText("Кількість сезонів: ")
+        self.buttonCount.setFont(QFont("Arial", 14))
+        self.buttonCount.setFixedSize(290, 45)
+        # self.buttonCount.start_animation()
+        self.buttonCount.move(550, 85)
+        self.buttonCount.clicked.connect(self.Season_Quantity_open)
+        # _______________________________Статус серіала серіала________________________________
+        label7 = QLabel(self)
+
+        label7.setFont(QFont("Arial", 15))
+        label7.setStyleSheet("color: blue")
+        label7.setText("Оберіть статус серіала")
+        label7.setFixedSize(280, 30)
+        label7.move(45, 135)
+
+        self.line_edit7 = QPlainTextEdit(self)
+        self.line_edit7.setPlaceholderText("Запишіть статус серіала самостійно або оберіть з доступних")
+        self.file_name3 = "data.txt"
+        self.file_path3 = os.path.join(os.getcwd(), self.file_name3)
+
+        self.file_watcher3 = QFileSystemWatcher()
+        self.file_watcher3.addPath(self.file_path3)
+        #self.file_watcher3.fileChanged.connect(self.update_line_edit7)
+
+        #self.update_line_edit7()
+        self.line_edit7.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit7.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit7.setFixedSize(280, 85)
+        self.line_edit7.move(45, 175)
+
+        self.buttonStatus = _MyButton(self)
+        self.buttonStatus.setText("Доступні жанри")
+        self.buttonStatus.setFont(QFont("Arial", 13))
+        self.buttonStatus.setFixedSize(280, 55)
+        # self.buttonStatus.start_animation()
+        self.buttonStatus.move(45, 270)
+        #self.buttonStatus.clicked.connect(self.Status_open)
+
+        # ________________________________________Запасна графа номер 1_______________________
+        label8 = QLabel(self)
+        label8.setFont(QFont("Arial", 15))
+        label8.setStyleSheet("color: blue")
+        label8.setText("Запасна графа номер 1")
+        label8.setFixedSize(280, 30)
+        label8.move(370, 135)
+
+        self.line_edit8= QPlainTextEdit(self)
+        self.line_edit8.setPlaceholderText(
+            "Запасна графа номер 1")
+        self.file_name4 = "movie_rating_result.txt"
+        self.file_path4 = os.path.join(os.getcwd(), self.file_name4)
+
+        self.file_watcher4 = QFileSystemWatcher()
+        self.file_watcher4.addPath(self.file_path4)
+        #self.file_watcher4.fileChanged.connect(self.update_line_edit8)
+
+        self.line_edit8.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit8.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit8.setFixedSize(280, 85)
+        self.line_edit8.move(370, 175)
+
+        self.buttonTemp = _MyButton(self)
+        self.buttonTemp.setText("Запасна графа номер 1")
+        self.buttonTemp.setFont(QFont("Arial", 9))
+        self.buttonTemp.setFixedSize(280, 55)
+        # self.buttonTemp.start_animation()
+        self.buttonTemp.move(370, 270)
+        #self.buttonTemp.clicked.connect(self.Season_Quantity_open)
+
+        #self.update_line_edit8()
+        # _______________________________________________Зайва 2 серіала______________________________
+        label9 = QLabel(self)
+        label9.setFont(QFont("Arial", 15))
+        label9.setStyleSheet("color: blue")
+        label9.setText("Запасна графа номер 2")
+        label9.setFixedSize(280, 30)
+        label9.move(690, 135)
+
+        self.line_edit9 = QPlainTextEdit(self)
+        self.line_edit9.setPlaceholderText(
+            "Запасна графа номер 2")
+        self.file_name5 = "movie_age_rating.txt"
+        self.file_path5 = os.path.join(os.getcwd(), self.file_name5)
+
+        self.file_watcher5 = QFileSystemWatcher()
+        self.file_watcher5.addPath(self.file_path5)
+        #self.file_watcher5.fileChanged.connect(self.update_line_edit9)
+
+        self.line_edit9.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit9.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit9.setFixedSize(280, 85)
+        self.line_edit9.move(690, 175)
+
+        self.buttonTemp2 = _MyButton(self)
+        self.buttonTemp2.setText("Запасна графа номер 2")
+        self.buttonTemp2.setFont(QFont("Arial", 9))
+        self.buttonTemp2.setFixedSize(280, 55)
+        # self.buttonAge.start_animation()
+        self.buttonTemp2.move(690, 270)
+        #self.buttonTemp2.clicked.connect(self.Age_Rating_open)
+
+        #self.update_line_edit9()
         # _______________________________Блок жанрів серіала________________________________
         label4 = QLabel(self)
 
@@ -196,6 +321,37 @@ class _new_Watched_Series(MyWindowFormat):
         # ___________________________________________Кінець коду елементів__________________________
     def open_newSeries(self):
         from ProgramPack.Series_module.Add_new_Series import new_Series
+
+        # ___________________Стерти поле жанрів_______________________________________________
+        try:
+            with open(self.file_path, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле оцінки_______________________________________________
+        try:
+            with open(self.file_path1, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле вікового рейтингу____________________________________
+        try:
+            with open(self.file_path2, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+
+        # ___________________Стерти лейбл сезонів____________________________________
+        try:
+            with open(self.file_path40, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+
         self.newSeries = new_Series()
         self.newSeries.show()
         self.close()
@@ -278,6 +434,14 @@ class _new_Watched_Series(MyWindowFormat):
 
         except Exception as e:
             print(f"Error reading the file: {e}")
+    def update_labelCount(self):
+        try:
+            with open(self.file_path40, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            self.labelCount.setText(text_content)
+
+        except Exception as e:
+            print(f"Error reading the file: {e}")
     def update_line_edit6(self):
         try:
             with open(self.file_path2, 'r', encoding='utf-8') as file:
@@ -306,5 +470,11 @@ class _new_Watched_Series(MyWindowFormat):
         from ProgramPack.src.Age_rating import Age_MovieRatingApp
 
         self.wind = Age_MovieRatingApp()
+        self.wind.setWindowModality(Qt.ApplicationModal)
+        self.wind.show()
+    def Season_Quantity_open(self):
+        from ProgramPack.src.SeasonQuantity import SeriesSeasonSelection
+
+        self.wind = SeriesSeasonSelection()
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
