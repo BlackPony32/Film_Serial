@@ -7,13 +7,14 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineE
 from PyQt5.QtGui import QFont
 from ProgramPack.src.MyButton import _MyButton
 from ProgramPack.src.MyWindowFormat import MyWindowFormat
-import Image_resource_rc
+
+
 class _new_Watched_Series(MyWindowFormat):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Новий переглянутий серіал")
-        self.setGeometry(0, 0, 1000, 700)
+        self.setGeometry(0, 0, 1000, 750)
 
         self.center()
         self.initialize()
@@ -31,32 +32,54 @@ class _new_Watched_Series(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        background_image = ":/images/light_cinema4.png"
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/popcorn4.png");
+            }
+            '''
+        )
         # Set the background image using a style sheet
-        # self.setStyleSheet(f"background-image: url({background_image});")
-        font = QFont()
-        font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
+
+        #font = QFont()
+        #font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
 
         # _____________Основні кнопки для переходу по сторінках і збереження даних в базу___________
         button1 = _MyButton(self)
         button2 = _MyButton(self)
 
         button1.setText("Назад")
-        button1.setFont(font)
+        #button1.setFont(font)
         button1.setFixedSize(350, 60)
         # button1.start_animation()
-        button1.move(45, 600)
+        button1.move(45, 650)
         button1.clicked.connect(self.open_newSeries)
 
         button2.setText("Додати серіал")
-        button2.setFont(font)
+        #button2.setFont(font)
         button2.setFixedSize(350, 60)
         # button2.start_animation()
-        button2.move(620, 600)
+        button2.move(620, 650)
         #button2.clicked.connect(self.open_newSeries)
 
         # ______________Назва серіала і поле для вводу назви_________________
         line_edit1 = QLineEdit(self)
+        line_edit1.setStyleSheet(
+            '''
+            QLineEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 18px;
+            }
+            QLineEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
+
         label1 = QLabel(self)
         label2 = QLabel(self)
 
@@ -67,13 +90,13 @@ class _new_Watched_Series(MyWindowFormat):
         label1.setStyleSheet("color: blue")
         label1.setText("Назва серіала")
         label1.setFixedSize(200, 30)
-        label1.move(45, 15)
+        label1.move(45, 5)
 
         line_edit1.setPlaceholderText("Введіть назву серіала")
-        line_edit1.setFont(QFont("Arial", 13))
-        line_edit1.setStyleSheet("background-color: #F0F0F0")
-        line_edit1.setFixedSize(685, 30)
-        line_edit1.move(290, 15)
+        #line_edit1.setFont(QFont("Arial", 13))
+        #line_edit1.setStyleSheet("background-color: #F0F0F0")
+        line_edit1.setFixedSize(685, 50)
+        line_edit1.move(290, 5)
 
         # ___________________Блок додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
@@ -92,7 +115,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання серіала")
-        self.buttonDate.setFont(QFont("Arial", 14))
+        self.buttonDate.setFont(QFont("Arial", 13))
         self.buttonDate.setFixedSize(300, 45)
         # self.buttonDate.start_animation()
         self.buttonDate.move(45, 85)
@@ -107,7 +130,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.labelCount = QLabel(self)
         self.labelCount.setFont(QFont("Arial", 15))
-        self.labelCount.setStyleSheet("background-color: transparent")  # Set transparent background
+        self.labelCount.setStyleSheet("color: white")  # Set transparent background
         self.labelCount.setFixedSize(200, 45)
         self.labelCount.move(850, 85)
 
@@ -121,7 +144,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonCount = _MyButton(self)
         self.buttonCount.setText("Кількість сезонів: ")
-        self.buttonCount.setFont(QFont("Arial", 14))
+        #self.buttonCount.setFont(QFont("Arial", 13))
         self.buttonCount.setFixedSize(290, 45)
         # self.buttonCount.start_animation()
         self.buttonCount.move(550, 85)
@@ -137,91 +160,133 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.line_edit7 = QPlainTextEdit(self)
         self.line_edit7.setPlaceholderText("Запишіть статус серіала самостійно або оберіть з доступних")
-        self.file_name3 = "data.txt"
+        self.file_name3 = "Series_Status.txt"
         self.file_path3 = os.path.join(os.getcwd(), self.file_name3)
 
         self.file_watcher3 = QFileSystemWatcher()
         self.file_watcher3.addPath(self.file_path3)
-        #self.file_watcher3.fileChanged.connect(self.update_line_edit7)
+        self.file_watcher3.fileChanged.connect(self.update_line_edit7)
 
-        #self.update_line_edit7()
+        self.update_line_edit7()
         self.line_edit7.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit7.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit7.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit7.setFixedSize(280, 85)
         self.line_edit7.move(45, 175)
 
         self.buttonStatus = _MyButton(self)
-        self.buttonStatus.setText("Доступні жанри")
-        self.buttonStatus.setFont(QFont("Arial", 13))
+        self.buttonStatus.setText("Статус серіала")
+        #self.buttonStatus.setFont(QFont("Arial", 9))
         self.buttonStatus.setFixedSize(280, 55)
         # self.buttonStatus.start_animation()
         self.buttonStatus.move(45, 270)
-        #self.buttonStatus.clicked.connect(self.Status_open)
+        self.buttonStatus.clicked.connect(self.Status_open)
 
-        # ________________________________________Запасна графа номер 1_______________________
+        # ________________________________________Поле режисерів_______________________
         label8 = QLabel(self)
         label8.setFont(QFont("Arial", 15))
         label8.setStyleSheet("color: blue")
-        label8.setText("Запасна графа номер 1")
+        label8.setText("Оберіть режисера")
         label8.setFixedSize(280, 30)
         label8.move(370, 135)
 
         self.line_edit8= QPlainTextEdit(self)
         self.line_edit8.setPlaceholderText(
-            "Запасна графа номер 1")
-        self.file_name4 = "movie_rating_result.txt"
+            "Оберіть режисера зі списку або введіть самостійно (по замовчуванню не вказано)")
+        self.file_name4 = "dataDirectors.txt"
         self.file_path4 = os.path.join(os.getcwd(), self.file_name4)
 
         self.file_watcher4 = QFileSystemWatcher()
         self.file_watcher4.addPath(self.file_path4)
-        #self.file_watcher4.fileChanged.connect(self.update_line_edit8)
+        self.file_watcher4.fileChanged.connect(self.update_line_edit8)
 
         self.line_edit8.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit8.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit8.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit8.setFixedSize(280, 85)
         self.line_edit8.move(370, 175)
 
         self.buttonTemp = _MyButton(self)
-        self.buttonTemp.setText("Запасна графа номер 1")
-        self.buttonTemp.setFont(QFont("Arial", 9))
+        self.buttonTemp.setText("Доступний вибір режисерів")
+        #self.buttonTemp.setFont(QFont("Arial", 9))
         self.buttonTemp.setFixedSize(280, 55)
         # self.buttonTemp.start_animation()
         self.buttonTemp.move(370, 270)
-        #self.buttonTemp.clicked.connect(self.Season_Quantity_open)
+        self.buttonTemp.clicked.connect(self.Directors_open)
 
-        #self.update_line_edit8()
-        # _______________________________________________Зайва 2 серіала______________________________
+        self.update_line_edit8()
+        # _______________________________________________Поле акторів______________________________
         label9 = QLabel(self)
         label9.setFont(QFont("Arial", 15))
         label9.setStyleSheet("color: blue")
-        label9.setText("Запасна графа номер 2")
+        label9.setText("Оберіть акторів")
         label9.setFixedSize(280, 30)
         label9.move(690, 135)
 
         self.line_edit9 = QPlainTextEdit(self)
         self.line_edit9.setPlaceholderText(
-            "Запасна графа номер 2")
-        self.file_name5 = "movie_age_rating.txt"
+            "Оберіть акторів зі списку або введіть самостійно (по замовчуванню не вказано)")
+        self.file_name5 = "dataActors.txt"
         self.file_path5 = os.path.join(os.getcwd(), self.file_name5)
 
         self.file_watcher5 = QFileSystemWatcher()
         self.file_watcher5.addPath(self.file_path5)
-        #self.file_watcher5.fileChanged.connect(self.update_line_edit9)
+        self.file_watcher5.fileChanged.connect(self.update_line_edit9)
 
         self.line_edit9.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit9.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit9.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit9.setFixedSize(280, 85)
         self.line_edit9.move(690, 175)
 
         self.buttonTemp2 = _MyButton(self)
-        self.buttonTemp2.setText("Запасна графа номер 2")
-        self.buttonTemp2.setFont(QFont("Arial", 9))
+        self.buttonTemp2.setText("Список доступних акторів")
+        #self.buttonTemp2.setFont(QFont("Arial", 9))
         self.buttonTemp2.setFixedSize(280, 55)
         # self.buttonAge.start_animation()
         self.buttonTemp2.move(690, 270)
-        #self.buttonTemp2.clicked.connect(self.Age_Rating_open)
+        self.buttonTemp2.clicked.connect(self.Actors_open)
 
-        #self.update_line_edit9()
+        self.update_line_edit9()
         # _______________________________Блок жанрів серіала________________________________
         label4 = QLabel(self)
 
@@ -242,13 +307,27 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.update_line_edit4()
         self.line_edit4.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit4.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit4.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit4.setFixedSize(280, 85)
         self.line_edit4.move(45, 385)
 
         self.buttonGanre = _MyButton(self)
         self.buttonGanre.setText("Доступні жанри")
-        self.buttonGanre.setFont(QFont("Arial", 13))
+        #self.buttonGanre.setFont(QFont("Arial", 9))
         self.buttonGanre.setFixedSize(280, 55)
         # self.buttonGanre.start_animation()
         self.buttonGanre.move(45, 480)
@@ -273,13 +352,27 @@ class _new_Watched_Series(MyWindowFormat):
         self.file_watcher1.fileChanged.connect(self.update_line_edit5)
 
         self.line_edit5.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit5.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit5.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit5.setFixedSize(280, 85)
         self.line_edit5.move(370, 385)
 
         self.buttonRating = _MyButton(self)
         self.buttonRating.setText("Доступна система оцінювання")
-        self.buttonRating.setFont(QFont("Arial", 9))
+        #self.buttonRating.setFont(QFont("Arial", 9))
         self.buttonRating.setFixedSize(280, 55)
         # self.buttonRating.start_animation()
         self.buttonRating.move(370, 480)
@@ -288,7 +381,7 @@ class _new_Watched_Series(MyWindowFormat):
         self.update_line_edit5()
         # _______________________________________________ age rating______________________________
         label6 = QLabel(self)
-        label6.setFont(QFont("Arial", 15))
+        label6.setFont(QFont("Arial", 14))
         label6.setStyleSheet("color: blue")
         label6.setText("Віковий рейтинг серіала")
         label6.setFixedSize(280, 30)
@@ -305,19 +398,61 @@ class _new_Watched_Series(MyWindowFormat):
         self.file_watcher2.fileChanged.connect(self.update_line_edit6)
 
         self.line_edit6.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit6.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit6.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit6.setFixedSize(280, 85)
         self.line_edit6.move(690, 385)
 
         self.buttonAge = _MyButton(self)
         self.buttonAge.setText("Доступна система рейтингу")
-        self.buttonAge.setFont(QFont("Arial", 9))
+        #self.buttonAge.setFont(QFont("Arial", 9))
         self.buttonAge.setFixedSize(280, 55)
         # self.buttonAge.start_animation()
         self.buttonAge.move(690, 480)
         self.buttonAge.clicked.connect(self.Age_Rating_open)
 
         self.update_line_edit6()
+        # _______________________Блок опису серіала____________________________________________
+        line_edit3 = QPlainTextEdit(self)
+        label3 = QLabel(self)
+        label3.setFont(QFont("Arial", 15))
+        label3.setStyleSheet("color: blue")
+        label3.setText("Короткий опис")
+        label3.setFixedSize(250, 30)
+        label3.move(45, 555)
+
+        line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
+        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
+        line_edit3.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
+        line_edit3.setFixedSize(700, 80)
+        line_edit3.move(270, 555)
         # ___________________________________________Кінець коду елементів__________________________
     def open_newSeries(self):
         from ProgramPack.Series_module.Add_new_Series import new_Series
@@ -347,6 +482,27 @@ class _new_Watched_Series(MyWindowFormat):
         # ___________________Стерти лейбл сезонів____________________________________
         try:
             with open(self.file_path40, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле статусу серіала______________________________
+        try:
+            with open(self.file_path3, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле режисерів____________________________________
+        try:
+            with open(self.file_path4, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле акторів____________________________________
+        try:
+            with open(self.file_path5, 'w', encoding='utf-8') as file:
                 pass  # Writing nothing truncates the file (clears its content)
 
         except Exception as e:
@@ -390,9 +546,46 @@ class _new_Watched_Series(MyWindowFormat):
         except Exception as e:
             print("Exception in update_label:", e)
             QMessageBox.critical(self, "Error", "An error occurred while updating the label.")
+    def Status_open(self):
+        from ProgramPack.Series_module.Series_Status import _SeriesStatus
+
+        self.wind = _SeriesStatus()
+        self.wind.setWindowModality(Qt.ApplicationModal)
+        self.wind.show()
+    def Actors_open(self):
+        from ProgramPack.src.Actors import ActorsApp
+        resource_path = ":/jsons/Actors.json"
+
+        # Open and read the resource using QFile and QTextStream
+        file = QFile(resource_path)
+        if file.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(file)
+            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            Actors_data = json.loads(stream.readAll())
+            Actors = Actors_data["Actors"]
+            file.close()
+
+        self.wind = ActorsApp(Actors)
+        self.wind.setWindowModality(Qt.ApplicationModal)
+        self.wind.show()
+    def Directors_open(self):
+        from ProgramPack.src.Directors import DirectorsApp
+        resource_path = ":/jsons/_Directors.json"
+
+        # Open and read the resource using QFile and QTextStream
+        file = QFile(resource_path)
+        if file.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(file)
+            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            Directors_data = json.loads(stream.readAll())
+            Directors = Directors_data["Directors"]
+            file.close()
+
+        self.wind = DirectorsApp(Directors)
+        self.wind.setWindowModality(Qt.ApplicationModal)
+        self.wind.show()
     def Genres_open(self):
         from ProgramPack.src.GenresWindow import GenreSelectionApp
-        import Image_resource_rc
         resource_path = ":/jsons/Genres.json"
 
         # Open and read the resource using QFile and QTextStream
@@ -460,6 +653,30 @@ class _new_Watched_Series(MyWindowFormat):
         except Exception as e:
             print("Exception in update_line_edit4:", e)
             QMessageBox.critical(self, 'Помилка', f'Виникла помилка при оновленні вмісту:\n{str(e)}')'''
+    def update_line_edit7(self):
+        try:
+            with open(self.file_path3, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            self.line_edit7.setPlainText(text_content)
+
+        except Exception as e:
+            print(f"Error reading the file: {e}")
+    def update_line_edit8(self):
+        try:
+            with open(self.file_path4, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            self.line_edit8.setPlainText(text_content)
+
+        except Exception as e:
+            print(f"Error reading the file: {e}")
+    def update_line_edit9(self):
+        try:
+            with open(self.file_path5, 'r', encoding='utf-8') as file:
+                text_content = file.read()
+            self.line_edit9.setPlainText(text_content)
+
+        except Exception as e:
+            print(f"Error reading the file: {e}")
     def Rating_open(self):
         from ProgramPack.src.series_movie_rating import MovieRatingApp
 
@@ -473,7 +690,7 @@ class _new_Watched_Series(MyWindowFormat):
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
     def Season_Quantity_open(self):
-        from ProgramPack.src.SeasonQuantity import SeriesSeasonSelection
+        from ProgramPack.Series_module.SeasonQuantity import SeriesSeasonSelection
 
         self.wind = SeriesSeasonSelection()
         self.wind.setWindowModality(Qt.ApplicationModal)
