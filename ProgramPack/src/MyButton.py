@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt, QTimer, QPropertyAnimation
 from PyQt5.QtGui import QPainter, QColor, QPen, QBrush, QFont, QPainterPath
 from PyQt5.QtWidgets import QPushButton
 
-class MyButton(QPushButton):
+class _MyButton(QPushButton):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -14,22 +14,27 @@ class MyButton(QPushButton):
         self.setStyleSheet(
             '''
             QPushButton {
-                color: #FFFF00;
-                background-color: #800080;
-                border: 2px solid #FF0000;
+                background-color: #6C3483;  /* Пурпурно-червоний */
+                color: #FFFFFF;
+                border-style: outset;
+                padding: 2px;
+                font: bold 15px;
+                border-width: 6px;
                 border-radius: 10px;
-                padding: 10px;
+                border-color: #512E5F;  /* Темний пурпурно-червоний */
             }
-
+            QPushButton:hover {
+                background-color: #F39C12;  /* Помаранчевий */
+            }
             QPushButton:pressed {
-                background-color: #808080;
+                background-color: #117A65;  /* Темний зелений */
             }
             '''
         )
 
         # Ініціалізуємо анімаційні властивості
         self.current_color = QColor(255, 0, 0)
-        self.animation = QPropertyAnimation(self, b"color")
+        """self.animation = QPropertyAnimation(self, b"color")
         self.animation.setDuration(2000)
         self.animation.setLoopCount(-1)
         self.animation.setStartValue(QColor(255, 0, 0))
@@ -40,7 +45,7 @@ class MyButton(QPushButton):
         self.timer = QTimer()
         self.timer.timeout.connect(self.start_animation)
         self.timer.start(1000)
-
+        """
 
 
     def paintEvent(self, event):
@@ -71,8 +76,8 @@ class MyButton(QPushButton):
 
         super().paintEvent(event)
 
-    def start_animation(self):
-        self.animation.start()
+    #def start_animation(self):
+    #    self.animation.start()
 
     def setColor(self, color):
         self.current_color = color
