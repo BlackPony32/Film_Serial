@@ -1,24 +1,42 @@
+import os
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QWidget
 
+from IPython.external.qt_for_kernel import QtGui
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QWidget, \
+    QMessageBox
+from ProgramPack.src.MyButton import _MyButton
 
 class MovieRatingApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Оцінка фільмів")
-        self.setGeometry(200, 200, 500, 300)
+        self.setWindowTitle("Оцінка фільмів-серіалів")
+        self.setGeometry(200, 200, 600, 300)
+        icon = QIcon(":/images/MovieIcon.jpg")
+        self.setStyleSheet(
+            '''
+            QWidget {
+        background-color: #9dadc7; /* Slightly off-white or light gray */}
+            '''
+        )
 
+        # Встановлюємо картинку як іконку вікна
+
+        width = 32  # Desired width
+        height = 32  # Desired height
+        resized_icon = icon.pixmap(width, height).scaled(width, height)
+        self.setWindowIcon(QtGui.QIcon(resized_icon))
         self.ratings = {
-            1: "Дуже поганий фільм (не рекомендую)",
-            2: "Поганий фільм",
-            3: "Не дуже вдалий фільм",
-            4: "Середній фільм",
-            5: "Непоганий фільм",
-            6: "Хороший фільм",
-            7: "Дуже хороший фільм",
-            8: "Чудовий фільм",
-            9: "Відмінний фільм",
-            10: "Шедевр!"
+            1: "Жахливо! Не рекомендую.",
+            2: "Дуже поганий.",
+            3: "Слабенький, не вразив.",
+            4: "Звичайний, нічого особливого.",
+            5: "Непоганий, можна подивитися.",
+            6: "Хороший, рекомендую.",
+            7: "Дуже хороший, вартий уваги.",
+            8: "Чудовий! Провів час із задоволенням.",
+            9: "Відмінний! Велике задоволення.",
+            10: "Шедевр! Обов'язково перегляну ще раз!"
         }
 
         layout = QVBoxLayout()
@@ -27,9 +45,21 @@ class MovieRatingApp(QMainWindow):
             hbox = QHBoxLayout()
 
             comment_label = QLabel(comment)
+            comment_label.setStyleSheet(
+            '''
+            QLabel {
+            background-color: #FFFFFF;  /* Білий фон */
+                border: 1px solid #BDBDBD;  /* Сіра рамка товщиною 1px */
+                border-radius: 5px;
+                padding: 6px;
+                font-size: 14px;
+                color: #333333;  /* Чорний колір тексту */
+            }
+            '''
+)
             hbox.addWidget(comment_label)
 
-            rating_button = QPushButton(f"{rating}/10")
+            rating_button = _MyButton(f"{rating}/10")
             rating_button.clicked.connect(self.show_result)
             hbox.addWidget(rating_button)
 
@@ -38,7 +68,7 @@ class MovieRatingApp(QMainWindow):
         self.result_label = QLabel()
         layout.addWidget(self.result_label)
 
-        save_button = QPushButton("Зберегти результат")
+        save_button = _MyButton("Зберегти результат")
         save_button.clicked.connect(self.save_to_file)
         layout.addWidget(save_button)
 
@@ -55,13 +85,28 @@ class MovieRatingApp(QMainWindow):
         self.current_result = f"Ви обрали оцінку: {button.text()}\n{comment}"
 
     def save_to_file(self):
+        project_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        file_path = os.path.join(project_dir, "movie_rating_result.txt")
+
+        # Open the file for writing and save the text
         try:
-            with open("movie_rating_result.txt", "w", encoding="utf-8") as file:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(self.current_result)
+            self.close()
+            # QMessageBox.information(self, 'Success', 'Text saved successfully!')
+
+        except Exception as e:
+            print(f"Error writing to the file: {e}")
+            QMessageBox.critical(self, 'Error', f'Error saving text:\n{str(e)}')
+        #____________
+        '''
+        try:
+            with open(":/txt/movie_rating_result.txt", "w", encoding="utf-8") as file:
                 file.write(self.current_result)
             #self.result_label.setText("Результат збережено у файл 'movie_rating_result.txt'")
         except Exception as e:
             self.result_label.setText("Помилка збереження у файл!")
         self.close()
-
+        '''
 
 

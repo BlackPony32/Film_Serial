@@ -2,10 +2,12 @@ import os
 import sys
 import json
 
+from IPython.external.qt_for_kernel import QtGui
 from PyQt5.QtCore import QTextStream, QFile, QIODevice
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, QPushButton, \
     QPlainTextEdit, QMessageBox, QFileDialog, QLineEdit
-
+from ProgramPack.src.MyButton import _MyButton
 
 class DirectorsApp(QWidget):
     def __init__(self, genres):
@@ -18,12 +20,41 @@ class DirectorsApp(QWidget):
     def init_ui(self):
         self.setWindowTitle("Вибір режисерів")
         self.setGeometry(100, 100, 400, 400)
+        icon = QIcon(":/images/MovieIcon.jpg")
+        self.setStyleSheet(
+            '''
+            QWidget {
+        background-color: #9dadc7; /* Slightly off-white or light gray */}
+            '''
+        )
+
+        # Встановлюємо картинку як іконку вікна
+
+        width = 32  # Desired width
+        height = 32  # Desired height
+        resized_icon = icon.pixmap(width, height).scaled(width, height)
+        self.setWindowIcon(QtGui.QIcon(resized_icon))
         layout = QVBoxLayout()
 
         label = QLabel("Оберіть режисера:")
         layout.addWidget(label)
 
         self.search_input = QLineEdit()
+        self.search_input.setStyleSheet(
+            '''
+            QLineEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 18px;
+            }
+            QLineEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.search_input.setPlaceholderText("Пошук режисера")
         self.search_input.textChanged.connect(self.filter_directors)
         layout.addWidget(self.search_input)
@@ -44,14 +75,29 @@ class DirectorsApp(QWidget):
 
         layout.addLayout(grid_layout)
 
-        button = QPushButton("Підтвердити")
+        button = _MyButton("Підтвердити")
         button.clicked.connect(self.show_selected_genres)
         layout.addWidget(button)
 
         self.selected_genres_text_edit = QPlainTextEdit()
+        self.selected_genres_text_edit.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         layout.addWidget(self.selected_genres_text_edit)
 
-        self.add_button = QPushButton("Додати")
+        self.add_button = _MyButton("Додати")
         self.add_button.clicked.connect(self.add_selected_genres)
         layout.addWidget(self.add_button)
 

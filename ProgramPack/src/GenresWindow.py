@@ -1,9 +1,13 @@
 import os
 import sys
 import json
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, QPushButton, \
-    QPlainTextEdit, QMessageBox, QFileDialog
 
+from IPython.external.qt_for_kernel import QtGui
+from PyQt5.QtCore import QTextStream, QFile, QIODevice
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, QPushButton, \
+    QPlainTextEdit, QMessageBox, QFileDialog
+from ProgramPack.src.MyButton import _MyButton
 
 class GenreSelectionApp(QWidget):
     def __init__(self, genres):
@@ -16,6 +20,21 @@ class GenreSelectionApp(QWidget):
     def init_ui(self):
         self.setWindowTitle("Вибір жанрів")
         self.setGeometry(100, 100, 400, 400)
+        icon = QIcon(":/images/MovieIcon.jpg")
+        self.setStyleSheet(
+            '''
+            QWidget {
+        background-color: #9dadc7; /* Slightly off-white or light gray */}
+            '''
+        )
+
+        # Встановлюємо картинку як іконку вікна
+
+        width = 32  # Desired width
+        height = 32  # Desired height
+        resized_icon = icon.pixmap(width, height).scaled(width, height)
+        self.setWindowIcon(QtGui.QIcon(resized_icon))
+
         layout = QVBoxLayout()
 
         label = QLabel("Виберіть жанри:")
@@ -37,17 +56,16 @@ class GenreSelectionApp(QWidget):
 
         layout.addLayout(grid_layout)
 
-        button = QPushButton("Підтвердити")
+        button = _MyButton("Підтвердити")
         button.clicked.connect(self.show_selected_genres)
         layout.addWidget(button)
 
         self.selected_genres_text_edit = QPlainTextEdit()
         layout.addWidget(self.selected_genres_text_edit)
 
-        self.add_button = QPushButton("Додати")
+        self.add_button = _MyButton("Додати")
         self.add_button.clicked.connect(self.add_selected_genres)
         layout.addWidget(self.add_button)
-
 
         self.setLayout(layout)
 
@@ -61,20 +79,25 @@ class GenreSelectionApp(QWidget):
         else:
             if genre in self.selected_genres:
                 self.selected_genres.remove(genre)
-
     def show_selected_genres(self):
         genres_str = ", ".join(self.selected_genres)
         self.selected_genres_text_edit.setPlainText(genres_str)
 
     def add_selected_genres(self):
-        file_name = "data.txt"
-        file_path = os.path.join(os.getcwd(), file_name)
+        text_to_save = self.selected_genres_text_edit.toPlainText()
 
+        # Get the absolute path to the project's directory
+        project_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        file_path = os.path.join(project_dir, "data.txt")
+
+        # Open the file for writing and save the text
         try:
             with open(file_path, 'w', encoding='utf-8') as file:
-                file.write(self.selected_genres_text_edit.toPlainText())
-                self.close()
+                file.write(text_to_save)
+            self.close()
+
         except Exception as e:
-            QMessageBox.critical(self, 'Помилка', f'Виникла помилка під час збереження файлу:\n{str(e)}')
+            print(f"Error writing to the file: {e}")
+            QMessageBox.critical(self, 'Error', f'Error saving text:\n{str(e)}')
 
 
