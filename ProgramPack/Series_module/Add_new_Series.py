@@ -30,7 +30,16 @@ class new_Series(MyWindowFormat):
 
     def initialize(self):
         # self.setStyleSheet("background-image: url(../img/popcorn4.png);")
+        background_image = ":/images/popcorn4.png"
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/popcorn4.png");
+            }
+            '''
+        )
 
+        self.setStyleSheet(self.styleSheet())
         # Створення кнопок і додавання їх до контейнера
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки

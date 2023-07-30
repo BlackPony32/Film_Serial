@@ -35,10 +35,11 @@ class _new_Watched_Series(MyWindowFormat):
         self.setStyleSheet(
             '''
             QMainWindow {
-                background-image: url(":/images/popcorn4.png");
+                background-image: url(":/images/light_cinema2.png");
             }
             '''
         )
+
         # Set the background image using a style sheet
 
         #font = QFont()
@@ -49,16 +50,52 @@ class _new_Watched_Series(MyWindowFormat):
         button2 = _MyButton(self)
 
         button1.setText("Назад")
-        #button1.setFont(font)
+        button1.setStyleSheet(
+            '''
+            QPushButton {
+                background-color: #6C3483;  /* Пурпурно-червоний */
+                color: #FFFFFF;
+                border-style: outset;
+                padding: 2px;
+                font: bold 25px;
+                border-width: 6px;
+                border-radius: 15px;
+                border-color: #512E5F;  /* Темний пурпурно-червоний */
+            }
+            QPushButton:hover {
+                background-color: #F39C12;  /* Помаранчевий */
+            }
+            QPushButton:pressed {
+                background-color: #117A65;  /* Темний зелений */
+            }
+            '''
+        )
         button1.setFixedSize(350, 60)
-        # button1.start_animation()
         button1.move(45, 650)
         button1.clicked.connect(self.open_newSeries)
 
         button2.setText("Додати серіал")
-        #button2.setFont(font)
+        button2.setStyleSheet(
+            '''
+            QPushButton {
+                background-color: #6C3483;  /* Пурпурно-червоний */
+                color: #FFFFFF;
+                border-style: outset;
+                padding: 2px;
+                font: bold 25px;
+                border-width: 6px;
+                border-radius: 15px;
+                border-color: #512E5F;  /* Темний пурпурно-червоний */
+            }
+            QPushButton:hover {
+                background-color: #F39C12;  /* Помаранчевий */
+            }
+            QPushButton:pressed {
+                background-color: #117A65;  /* Темний зелений */
+            }
+            '''
+        )
         button2.setFixedSize(350, 60)
-        # button2.start_animation()
         button2.move(620, 650)
         #button2.clicked.connect(self.open_newSeries)
 
@@ -83,31 +120,26 @@ class _new_Watched_Series(MyWindowFormat):
         label1 = QLabel(self)
         label2 = QLabel(self)
 
-        #line_edit3 = QPlainTextEdit(self)
-        #label3 = QLabel(self)
-
         label1.setFont(QFont("Arial", 15))
-        label1.setStyleSheet("color: blue")
+        label1.setStyleSheet("color: lightgray")
         label1.setText("Назва серіала")
         label1.setFixedSize(200, 30)
         label1.move(45, 5)
 
         line_edit1.setPlaceholderText("Введіть назву серіала")
-        #line_edit1.setFont(QFont("Arial", 13))
-        #line_edit1.setStyleSheet("background-color: #F0F0F0")
         line_edit1.setFixedSize(685, 50)
         line_edit1.move(290, 5)
 
         # ___________________Блок додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
-        label2.setStyleSheet("color: blue")
+        label2.setStyleSheet("color: lightgray")
         label2.setText("Оберіть дату додавання серіала")
         label2.setFixedSize(570, 30)
         label2.move(45, 55)
 
         self.labelDate = QLabel(self)
         self.labelDate.setFont(QFont("Arial", 15))
-        self.labelDate.setStyleSheet("background-color: transparent")  # Set transparent background
+        self.labelDate.setStyleSheet("color: white")
         self.current_date = QDate.currentDate()
         # self.labelDate.setText(self.current_date.toString("dd.MM.yyyy")) #баг про накладання дат
         self.labelDate.setFixedSize(200, 45)
@@ -123,14 +155,14 @@ class _new_Watched_Series(MyWindowFormat):
         # ___________________Блок кількості сезонів_____________________________________________
         self.label22 = QLabel(self)
         self.label22.setFont(QFont("Arial", 15))
-        self.label22.setStyleSheet("color: blue")
+        self.label22.setStyleSheet("color: lightgray")
         self.label22.setText("Оберіть скільки сезонів в серіалі")
         self.label22.setFixedSize(570, 30)
         self.label22.move(555, 55)
 
         self.labelCount = QLabel(self)
         self.labelCount.setFont(QFont("Arial", 15))
-        self.labelCount.setStyleSheet("color: white")  # Set transparent background
+        self.labelCount.setStyleSheet("color: white")
         self.labelCount.setFixedSize(200, 45)
         self.labelCount.move(850, 85)
 
@@ -153,7 +185,7 @@ class _new_Watched_Series(MyWindowFormat):
         label7 = QLabel(self)
 
         label7.setFont(QFont("Arial", 15))
-        label7.setStyleSheet("color: blue")
+        label7.setStyleSheet("color: lightgray")
         label7.setText("Оберіть статус серіала")
         label7.setFixedSize(280, 30)
         label7.move(45, 135)
@@ -191,14 +223,13 @@ class _new_Watched_Series(MyWindowFormat):
         self.buttonStatus.setText("Статус серіала")
         #self.buttonStatus.setFont(QFont("Arial", 9))
         self.buttonStatus.setFixedSize(280, 55)
-        # self.buttonStatus.start_animation()
         self.buttonStatus.move(45, 270)
         self.buttonStatus.clicked.connect(self.Status_open)
 
         # ________________________________________Поле режисерів_______________________
         label8 = QLabel(self)
         label8.setFont(QFont("Arial", 15))
-        label8.setStyleSheet("color: blue")
+        label8.setStyleSheet("color: lightgray")
         label8.setText("Оберіть режисера")
         label8.setFixedSize(280, 30)
         label8.move(370, 135)
@@ -236,7 +267,6 @@ class _new_Watched_Series(MyWindowFormat):
         self.buttonTemp.setText("Доступний вибір режисерів")
         #self.buttonTemp.setFont(QFont("Arial", 9))
         self.buttonTemp.setFixedSize(280, 55)
-        # self.buttonTemp.start_animation()
         self.buttonTemp.move(370, 270)
         self.buttonTemp.clicked.connect(self.Directors_open)
 
@@ -244,7 +274,7 @@ class _new_Watched_Series(MyWindowFormat):
         # _______________________________________________Поле акторів______________________________
         label9 = QLabel(self)
         label9.setFont(QFont("Arial", 15))
-        label9.setStyleSheet("color: blue")
+        label9.setStyleSheet("color: lightgray")
         label9.setText("Оберіть акторів")
         label9.setFixedSize(280, 30)
         label9.move(690, 135)
@@ -282,7 +312,6 @@ class _new_Watched_Series(MyWindowFormat):
         self.buttonTemp2.setText("Список доступних акторів")
         #self.buttonTemp2.setFont(QFont("Arial", 9))
         self.buttonTemp2.setFixedSize(280, 55)
-        # self.buttonAge.start_animation()
         self.buttonTemp2.move(690, 270)
         self.buttonTemp2.clicked.connect(self.Actors_open)
 
@@ -291,7 +320,7 @@ class _new_Watched_Series(MyWindowFormat):
         label4 = QLabel(self)
 
         label4.setFont(QFont("Arial", 15))
-        label4.setStyleSheet("color: blue")
+        label4.setStyleSheet("color: lightgray")
         label4.setText("Оберіть жанр серіала")
         label4.setFixedSize(280, 30)
         label4.move(45, 345)
@@ -336,7 +365,7 @@ class _new_Watched_Series(MyWindowFormat):
         # ________________________________________series rating(оцінка серіала)_______________________
         label5 = QLabel(self)
         label5.setFont(QFont("Arial", 15))
-        label5.setStyleSheet("color: blue")
+        label5.setStyleSheet("color: lightgray")
         label5.setText("Оберіть оцінку серіала")
         label5.setFixedSize(280, 30)
         label5.move(370, 345)
@@ -382,8 +411,8 @@ class _new_Watched_Series(MyWindowFormat):
         # _______________________________________________ age rating______________________________
         label6 = QLabel(self)
         label6.setFont(QFont("Arial", 14))
-        label6.setStyleSheet("color: blue")
-        label6.setText("Віковий рейтинг серіала")
+        label6.setStyleSheet("color: lightgray")
+        label6.setText("Вікові обмеження")
         label6.setFixedSize(280, 30)
         label6.move(690, 345)
 
@@ -429,7 +458,7 @@ class _new_Watched_Series(MyWindowFormat):
         line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
         label3.setFont(QFont("Arial", 15))
-        label3.setStyleSheet("color: blue")
+        label3.setStyleSheet("color: lightgray")
         label3.setText("Короткий опис")
         label3.setFixedSize(250, 30)
         label3.move(45, 555)
@@ -518,7 +547,19 @@ class _new_Watched_Series(MyWindowFormat):
             self.update_label()
     def show_calendar(self):
         try:
+            from PyQt5.QtGui import QIcon
+            from IPython.external.qt_for_kernel import QtGui
             self.calendar = QCalendarWidget()
+            icon = QIcon(":/images/MovieIcon.jpg")
+
+            # Встановлюємо картинку як іконку вікна
+
+            width = 32  # Desired width
+            height = 32  # Desired height
+            resized_icon = icon.pixmap(width, height).scaled(width, height)
+
+            # Set the resized icon as the taskbar icon for the main window
+
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
 
@@ -526,6 +567,7 @@ class _new_Watched_Series(MyWindowFormat):
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
             self.widget.setLayout(layout)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setGeometry(200, 200, 300, 200)
             self.widget.show()
         except Exception as e:
