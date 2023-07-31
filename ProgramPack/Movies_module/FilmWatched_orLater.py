@@ -28,9 +28,15 @@ class _FilmWatchedOrlaterList(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        # self.setStyleSheet("background-image: url(../img/popcorn4.png);")
-
-        # Створення кнопок і додавання їх до контейнера
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/popcorn4.png");
+            }
+            '''
+        )
+        # Set the background image using a style sheet
+        self.setStyleSheet(self.styleSheet())
         font = QFont()
         font.setPointSize(16)  # Встановлюємо розмір тексту кнопки
 
