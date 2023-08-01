@@ -30,9 +30,15 @@ class _new_Watched_Film(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
-        background_image = ":/images/light_cinema4.png"
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/cinema1.png");
+            }
+            '''
+        )
         # Set the background image using a style sheet
-        #self.setStyleSheet(f"background-image: url({background_image});")
+        self.setStyleSheet(self.styleSheet())
         font = QFont()
         font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
 
@@ -41,34 +47,84 @@ class _new_Watched_Film(MyWindowFormat):
         button2 = _MyButton(self)
 
         button1.setText("Назад")
-        button1.setFont(font)
+        button1.setStyleSheet(
+            '''
+            QPushButton {
+                background-color: #6C3483;  /* Пурпурно-червоний */
+                color: #FFFFFF;
+                border-style: outset;
+                padding: 2px;
+                font: bold 25px;
+                border-width: 6px;
+                border-radius: 15px;
+                border-color: #512E5F;  /* Темний пурпурно-червоний */
+            }
+            QPushButton:hover {
+                background-color: #F39C12;  /* Помаранчевий */
+            }
+            QPushButton:pressed {
+                background-color: #117A65;  /* Темний зелений */
+            }
+            '''
+        )
         button1.setFixedSize(350, 60)
-        #button1.start_animation()
         button1.move(45, 600)
         button1.clicked.connect(self.open_newFilm)
 
         button2.setText("Додати фільм")
-        button2.setFont(font)
+        button2.setStyleSheet(
+            '''
+            QPushButton {
+                background-color: #6C3483;  /* Пурпурно-червоний */
+                color: #FFFFFF;
+                border-style: outset;
+                padding: 2px;
+                font: bold 25px;
+                border-width: 6px;
+                border-radius: 15px;
+                border-color: #512E5F;  /* Темний пурпурно-червоний */
+            }
+            QPushButton:hover {
+                background-color: #F39C12;  /* Помаранчевий */
+            }
+            QPushButton:pressed {
+                background-color: #117A65;  /* Темний зелений */
+            }
+            '''
+        )
         button2.setFixedSize(350, 60)
-        #button2.start_animation()
         button2.move(620, 600)
         button2.clicked.connect(self.open_newFilm)
 
-        #___________________Лейбл про анегдот та поле для виводу випадкового анегдоту______________________________
+        #___________________Лейбл про анегдот та поле для виводу випадкового анегдоту_____________________________
         label0 = QLabel(self)
         labelAnec = QPlainTextEdit(self)
 
         label0.setFont(QFont("Arial", 15))
-        label0.setStyleSheet("color: blue")
+        label0.setStyleSheet("color: lightgray")
         label0.setText("Невеликий анегдот на тематику фільмів (згенеровано АІ)")
         label0.setFixedSize(795, 30)
         label0.move(45, 15)
 
         self.generate_random_anecdote()
         random_joke = self.generate_random_anecdote()
-
+        labelAnec.setReadOnly(True)
         labelAnec.setFont(QFont("Arial", 15))
-        labelAnec.setStyleSheet("color: blue")
+        labelAnec.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         labelAnec.setPlainText(random_joke)
         labelAnec.setFixedSize(930, 70)
         labelAnec.move(45, 45)
@@ -81,27 +137,41 @@ class _new_Watched_Film(MyWindowFormat):
         label3 = QLabel(self)
 
         label1.setFont(QFont("Arial", 15))
-        label1.setStyleSheet("color: blue")
+        label1.setStyleSheet("color: lightgray")
         label1.setText("Назва фільма")
         label1.setFixedSize(200, 30)
         label1.move(45, 120)
 
         line_edit1.setPlaceholderText("Введіть назву фільма")
         line_edit1.setFont(QFont("Arial", 13))
-        line_edit1.setStyleSheet("background-color: #F0F0F0")
-        line_edit1.setFixedSize(685, 30)
+        line_edit1.setStyleSheet(
+            '''
+            QLineEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 18px;
+            }
+            QLineEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
+        line_edit1.setFixedSize(685, 50)
         line_edit1.move(290, 120)
 
         # ___________________Блок дати додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
-        label2.setStyleSheet("color: blue")
+        label2.setStyleSheet("color: lightgray")
         label2.setText("Оберіть дату додавання фільма")
         label2.setFixedSize(570, 30)
         label2.move(45, 175)
 
         self.labelDate = QLabel(self)
         self.labelDate.setFont(QFont("Arial", 15))
-        self.labelDate.setStyleSheet("background-color: transparent")  # Set transparent background
+        self.labelDate.setStyleSheet("color: white")  # Set transparent background
         self.current_date = QDate.currentDate()
         #self.labelDate.setText(self.current_date.toString("dd.MM.yyyy")) #баг про накладання дат
         self.labelDate.setFixedSize(200, 45)
@@ -111,19 +181,32 @@ class _new_Watched_Film(MyWindowFormat):
         self.buttonDate.setText("Дата додавання")
         self.buttonDate.setFont(QFont("Arial", 14))
         self.buttonDate.setFixedSize(250, 45)
-        #self.buttonDate.start_animation()
         self.buttonDate.move(45, 205)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
         # _______________________Блок опису фільма____________________________________________
         label3.setFont(QFont("Arial", 15))
-        label3.setStyleSheet("color: blue")
+        label3.setStyleSheet("color: lightgray")
         label3.setText("Короткий опис")
         label3.setFixedSize(250, 30)
         label3.move(45, 265)
 
         line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
         line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
-        line_edit3.setStyleSheet("background-color: #F0F0F0")
+        line_edit3.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         line_edit3.setFixedSize(700, 80)
         line_edit3.move(270, 265)
 
@@ -131,7 +214,7 @@ class _new_Watched_Film(MyWindowFormat):
         label4 = QLabel(self)
 
         label4.setFont(QFont("Arial", 15))
-        label4.setStyleSheet("color: blue")
+        label4.setStyleSheet("color: lightgray")
         label4.setText("Оберіть жанр фільма")
         label4.setFixedSize(280, 30)
         label4.move(45, 345)
@@ -149,7 +232,21 @@ class _new_Watched_Film(MyWindowFormat):
 
         #_______________________________Блок жанрів фільма________________________________
         self.line_edit4.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit4.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit4.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit4.setFixedSize(280, 85)
         self.line_edit4.move(45, 385)
 
@@ -164,7 +261,7 @@ class _new_Watched_Film(MyWindowFormat):
         #________________________________________film rating(оцінка фільма)_______________________
         label5 = QLabel(self)
         label5.setFont(QFont("Arial", 15))
-        label5.setStyleSheet("color: blue")
+        label5.setStyleSheet("color: lightgray")
         label5.setText("Оберіть оцінку фільма")
         label5.setFixedSize(280, 30)
         label5.move(370, 345)
@@ -179,7 +276,21 @@ class _new_Watched_Film(MyWindowFormat):
         self.file_watcher1.fileChanged.connect(self.update_line_edit5)
 
         self.line_edit5.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit5.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit5.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit5.setFixedSize(280, 85)
         self.line_edit5.move(370, 385)
 
@@ -195,7 +306,7 @@ class _new_Watched_Film(MyWindowFormat):
         #_______________________________________________ age rating______________________________
         label6 = QLabel(self)
         label6.setFont(QFont("Arial", 15))
-        label6.setStyleSheet("color: blue")
+        label6.setStyleSheet("color: lightgray")
         label6.setText("Віковий рейтинг фільма")
         label6.setFixedSize(280, 30)
         label6.move(690, 345)
@@ -211,7 +322,21 @@ class _new_Watched_Film(MyWindowFormat):
         self.file_watcher2.fileChanged.connect(self.update_line_edit6)
 
         self.line_edit6.setFont(QFont("Arial", 9))  # 13 норм розмір
-        self.line_edit6.setStyleSheet("background-color: #F0F0F0")
+        self.line_edit6.setStyleSheet(
+            '''
+            QPlainTextEdit {
+                background-color: #FDFD96;  /* Світло-жовтий фон */
+                border: 2px solid #FF5733;  /* Червона рамка */
+                border-radius: 15px;
+                padding: 10px;
+                font-size: 15px;
+            }
+            QPlainTextEdit:focus {
+                border-color: #0074D9;  /* Задаємо колір рамки при фокусі */
+                background-color: #85C1E9;  /* Задаємо колір фону при фокусі */
+            }
+            '''
+        )
         self.line_edit6.setFixedSize(280, 85)
         self.line_edit6.move(690, 385)
 
@@ -235,6 +360,20 @@ class _new_Watched_Film(MyWindowFormat):
 
     def show_calendar(self):
         try:
+            from PyQt5.QtGui import QIcon
+            from IPython.external.qt_for_kernel import QtGui
+            self.calendar = QCalendarWidget()
+            icon = QIcon(":/images/MovieIcon.jpg")
+
+            # Встановлюємо картинку як іконку вікна
+
+            width = 32  # Desired width
+            height = 32  # Desired height
+            resized_icon = icon.pixmap(width, height).scaled(width, height)
+
+            # Set the resized icon as the taskbar icon for the main window
+
+            #self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar = QCalendarWidget()
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
@@ -242,6 +381,7 @@ class _new_Watched_Film(MyWindowFormat):
             self.widget = QWidget()
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setLayout(layout)
             self.widget.setGeometry(200, 200, 300, 200)
             self.widget.show()
@@ -271,7 +411,6 @@ class _new_Watched_Film(MyWindowFormat):
         if self.buttonDate.isEnabled():
             self.show_calendar()
             self.update_label()
-
     def generate_random_anecdote(self):
         import json
         import random
@@ -285,29 +424,9 @@ class _new_Watched_Film(MyWindowFormat):
             stream.setCodec("UTF-8")  # Set the encoding to UTF-8
             anecdotes = json.loads(stream.readAll())
             file.close()
-            #print(json_data)
-        """
-        else:
-            print("Error opening the resource file.")
-        # Відкриття JSON-файлу та завантаження анекдотів
-        try:
-            file_path = ':/jsons/Filmanecdotes.json'
-            with open(file_path, 'r', encoding='utf-8') as file:
-                anecdotes = json.load(file)
-        except FileNotFoundError:
-            print("Файл не знайдено. Перевірте правильність шляху до файлу.")
-        except json.JSONDecodeError as e:
-            print(f"Помилка декодування JSON: {e}")
-        except Exception as e:
-            print(f"Сталася невідома помилка: {e}")
-
-        # Вибір випадкового анекдота
-        """
         random_anecdote = random.choice(anecdotes)
 
         return random_anecdote['text']
-        #text = "ds"
-        #return text
     def open_newFilm(self):
         from ProgramPack.Movies_module.Add_new_Film import new_Film
         #___________________Стерти поле жанрів_______________________________________________
