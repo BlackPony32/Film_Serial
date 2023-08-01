@@ -227,6 +227,20 @@ class _new_Series_later(MyWindowFormat):
             self.update_label()
     def show_calendar(self):
         try:
+            from PyQt5.QtGui import QIcon
+            from IPython.external.qt_for_kernel import QtGui
+            self.calendar = QCalendarWidget()
+            icon = QIcon(":/images/MovieIcon.jpg")
+
+            # Встановлюємо картинку як іконку вікна
+
+            width = 32  # Desired width
+            height = 32  # Desired height
+            resized_icon = icon.pixmap(width, height).scaled(width, height)
+
+            # Set the resized icon as the taskbar icon for the main window
+
+            # self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar = QCalendarWidget()
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
@@ -234,6 +248,7 @@ class _new_Series_later(MyWindowFormat):
             self.widget = QWidget()
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setLayout(layout)
             self.widget.setGeometry(200, 200, 300, 200)
             self.widget.show()
