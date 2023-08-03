@@ -2,7 +2,7 @@ import sys
 
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QDesktopWidget, QTableWidgetItem, \
-    QHeaderView, QHBoxLayout, QTableWidget, QScrollArea, QVBoxLayout, QWidget
+    QHeaderView, QHBoxLayout, QTableWidget, QScrollArea, QVBoxLayout, QWidget, QMessageBox
 import psycopg2
 from ProgramPack.src.MyButton import _MyButton
 from ProgramPack.src.MyWindowFormat import MyWindowFormat
@@ -65,7 +65,7 @@ class _WatchedFilmList(MyWindowFormat):
         # Додайте таблицю в прокрутний віджет
         self.table_widget = QTableWidget(self)
         self.table_widget.move(0,70)
-        self.table_widget.setFixedSize(1000, 500)
+        self.table_widget.setFixedSize(2000, 500)
         scroll_area.setWidget(self.table_widget)
 
         # Підключення сигналу текстового поля до слоту для динамічного пошуку
@@ -98,6 +98,7 @@ class _WatchedFilmList(MyWindowFormat):
         )
         self.button1.setFixedSize(315, 60)
         self.button1.move(45, 580)
+        self.button1.clicked.connect(self.handle_delete_button_click)
 
         self.button2 = QPushButton("Назад", self)
         self.button2.setStyleSheet(
@@ -162,12 +163,14 @@ class _WatchedFilmList(MyWindowFormat):
 
             # Виконання SQL-запиту та виведення даних у таблиці
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM Watched_Film_List")
+            cursor.execute(
+                "SELECT unique_id, movie_name, date_added, genre, movie_rating, "
+                "age_restrictions, movie_description FROM New_Watched_Film_List")
             rows = cursor.fetchall()
             # Приховання стовпця з нумерацією
             self.table_widget.verticalHeader().setVisible(False)
             self.table_widget.setRowCount(len(rows))
-            desired_column_count = 6
+            desired_column_count = 7
             self.table_widget.setColumnCount(desired_column_count)
 
             # Налаштування стилю та вигляду таблиці
@@ -184,18 +187,25 @@ class _WatchedFilmList(MyWindowFormat):
                 }
             """)
 
-            # Налаштування заголовків стовпців
-            header_labels = ["Назва фільма", "Дата додавання", "Жанр", "Оцінка фільма", "Вікові обмеження","Опис фільма"]
+            # Налаштування заголовків стовпців (без unique_id)
+            header_labels = ["ID", "Назва фільма", "Дата додавання", "Жанр", "Оцінка фільма", "Вікові обмеження",
+                             "Опис фільма"]
             self.table_widget.setHorizontalHeaderLabels(header_labels)
 
             header = self.table_widget.horizontalHeader()
-            header.setSectionResizeMode(QHeaderView.Stretch)  # Розтягнути всі стовпці
+            column_widths = [50, 200, 130, 250, 240, 400, 780]  # Встановіть бажані довжини для кожного стовпця
+            for col, width in enumerate(column_widths):
+                header.setSectionResizeMode(col, QHeaderView.Fixed)
+                header.resizeSection(col, width)
 
             for i, row in enumerate(rows):
                 for j, value in enumerate(row):
                     item = QTableWidgetItem(str(value))
-                    if len(str(value)) > 15:
-                        item.setToolTip(str(value))  # Додано підказки для довгих значень
+                    if j == 0:  # Якщо це перший стовпець (unique_id)
+                        from IPython.external.qt_for_kernel import QtCore
+                        item.setFlags(QtCore.Qt.ItemIsEnabled)  # Зробити цю комірку неклікабельною
+                    else:
+                        item.setToolTip(str(value))
                     self.table_widget.setItem(i, j, item)
 
             # Закриття курсора та з'єднання
@@ -208,6 +218,7 @@ class _WatchedFilmList(MyWindowFormat):
             self.table_widget.setHorizontalHeaderLabels(["Error"])
             item = QTableWidgetItem(f"{e}")
             self.table_widget.setItem(0, 0, item)
+
     def update_database(self):
         try:
             conn = psycopg2.connect(
@@ -220,19 +231,28 @@ class _WatchedFilmList(MyWindowFormat):
             cursor = conn.cursor()
 
             for row in range(self.table_widget.rowCount()):
-                movie_name = self.table_widget.item(row, 0).text()
-                date_added = self.table_widget.item(row, 1).text()
-                genre = self.table_widget.item(row, 2).text()
-                movie_rating = self.table_widget.item(row, 3).text()
-                age_restrictions = self.table_widget.item(row, 4).text()
-                movie_description = self.table_widget.item(row, 5).text()
+                unique_id = self.table_widget.item(row, 0).text()  # Get unique_id from the first column
+                movie_name = self.table_widget.item(row, 1).text()
+                date_added = self.table_widget.item(row, 2).text()
+                genre = self.table_widget.item(row, 3).text()
+                movie_rating = self.table_widget.item(row, 4).text()
+                age_restrictions = self.table_widget.item(row, 5).text()
+                movie_description = self.table_widget.item(row, 6).text()
+
+                if not genre or not movie_rating or not age_restrictions or not movie_description:
+                    # Show a warning message box
+                    msg_box = QMessageBox()
+                    msg_box.setIcon(QMessageBox.Warning)
+                    msg_box.setWindowTitle("Попередження")
+                    msg_box.setText("Один або декілька обов'язкових полів порожні. Зміни не будуть збережені.")
+                    msg_box.exec_()
+                    return  # Exit the function without updating
 
                 # Update the corresponding row in the database based on movie_name and date_added
                 cursor.execute(
-                    "UPDATE Watched_Film_List SET genre = %s, movie_rating = %s, age_restrictions = %s, movie_description = %s WHERE movie_name = %s AND date_added = %s",
-                    (genre, movie_rating, age_restrictions, movie_description, movie_name, date_added)
+                    "UPDATE New_Watched_Film_List SET movie_name = %s, date_added = %s, genre = %s, movie_rating = %s, age_restrictions = %s, movie_description = %s WHERE unique_id = %s",
+                    (movie_name, date_added, genre, movie_rating, age_restrictions, movie_description, unique_id)
                 )
-
             conn.commit()
             cursor.close()
             conn.close()
@@ -242,6 +262,33 @@ class _WatchedFilmList(MyWindowFormat):
             print("Помилка бази даних:", e)
             import traceback
             traceback.print_exc()
+
+    def delete_movie(self, unique_id):
+        try:
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                database="Film_Series",
+                user="postgres",
+                password="postgresql"
+            )
+            cursor = conn.cursor()
+
+            # Delete the row with the specified unique_id from the database
+            cursor.execute(
+                "DELETE FROM New_Watched_Film_List WHERE unique_id = %s",
+                (unique_id,)
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            self.setWindowTitle("Фільм видалено")
+        except psycopg2.Error as e:
+            self.setWindowTitle("Помилка при видаленні фільму")
+            print("Помилка бази даних:", e)
+            import traceback
+            traceback.print_exc()
+
     def filter_table(self, search_text):
         for row in range(self.table_widget.rowCount()):
             row_hidden = True
@@ -258,3 +305,10 @@ class _WatchedFilmList(MyWindowFormat):
         self.newFilm = _FilmList()
         self.newFilm.show()
         self.close()
+
+    def handle_delete_button_click(self):
+        selected_row = self.table_widget.currentRow()  # Отримати індекс вибраного рядка
+        if selected_row >= 0:
+            unique_id = self.table_widget.item(selected_row, 0).text()  # Отримати unique_id з першого стовпця
+            self.delete_movie(unique_id)
+            self.table_widget.removeRow(selected_row)  # Видалити рядок з таблиці
