@@ -22,13 +22,11 @@ class _new_Watched_Film(MyWindowFormat):
             button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
 
         super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
-
     def center(self):
         frame_geometry = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
         frame_geometry.moveCenter(center_point)
         self.move(frame_geometry.topLeft())
-
     def initialize(self):
         self.setStyleSheet(
             '''
@@ -94,7 +92,7 @@ class _new_Watched_Film(MyWindowFormat):
         )
         button2.setFixedSize(350, 60)
         button2.move(620, 600)
-        button2.clicked.connect(self.open_newFilm)
+        button2.clicked.connect(self.insert_data)
 
         #___________________Лейбл про анегдот та поле для виводу випадкового анегдоту_____________________________
         label0 = QLabel(self)
@@ -130,10 +128,10 @@ class _new_Watched_Film(MyWindowFormat):
         labelAnec.move(45, 45)
 
         #______________Назва фільма і поле для вводу назви_________________
-        line_edit1 = QLineEdit(self)
+        self.line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
         label2 = QLabel(self)
-        line_edit3 = QPlainTextEdit(self)
+        self.line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
 
         label1.setFont(QFont("Arial", 15))
@@ -142,9 +140,9 @@ class _new_Watched_Film(MyWindowFormat):
         label1.setFixedSize(200, 30)
         label1.move(45, 120)
 
-        line_edit1.setPlaceholderText("Введіть назву фільма")
-        line_edit1.setFont(QFont("Arial", 13))
-        line_edit1.setStyleSheet(
+        self.line_edit1.setPlaceholderText("Введіть назву фільма")
+        self.line_edit1.setFont(QFont("Arial", 13))
+        self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -159,8 +157,8 @@ class _new_Watched_Film(MyWindowFormat):
             }
             '''
         )
-        line_edit1.setFixedSize(685, 50)
-        line_edit1.move(290, 120)
+        self.line_edit1.setFixedSize(685, 50)
+        self.line_edit1.move(290, 120)
 
         # ___________________Блок дати додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
@@ -190,9 +188,9 @@ class _new_Watched_Film(MyWindowFormat):
         label3.setFixedSize(250, 30)
         label3.move(45, 265)
 
-        line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
-        line_edit3.setStyleSheet(
+        self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
+        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -207,8 +205,8 @@ class _new_Watched_Film(MyWindowFormat):
             }
             '''
         )
-        line_edit3.setFixedSize(700, 80)
-        line_edit3.move(270, 265)
+        self.line_edit3.setFixedSize(700, 80)
+        self.line_edit3.move(270, 265)
 
         #_________________Блок опису жанру фільма______________________
         label4 = QLabel(self)
@@ -350,14 +348,12 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.update_line_edit6()
         #___________________________________________Кінець коду елементів__________________________
-
     def open_newSeries(self):                               # ШО ЦЕЙ КОД РОБИТЬ?
         from ProgramPack.Movies_module.Add_new_Film import new_Film
 
         self.newFilm = new_Film()
         self.newFilm.show()
         self.close()
-
     def show_calendar(self):
         try:
             from PyQt5.QtGui import QIcon
@@ -388,7 +384,6 @@ class _new_Watched_Film(MyWindowFormat):
         except Exception as e:
             print("Exception in show_calendar:", e)
             QMessageBox.critical(self, "Error", "An error occurred while opening the calendar.")
-
     def select_date(self, date):
         try:
             self.current_date = date
@@ -397,7 +392,6 @@ class _new_Watched_Film(MyWindowFormat):
         except Exception as e:
             print("Exception in select_date:", e)
             QMessageBox.critical(self, "Error", "An error occurred while selecting the date.")
-
     def update_label(self):
         #self.labelDate.setText("")
         try:
@@ -405,7 +399,6 @@ class _new_Watched_Film(MyWindowFormat):
         except Exception as e:
             print("Exception in update_label:", e)
             QMessageBox.critical(self, "Error", "An error occurred while updating the label.")
-
     def buttonDateClicked(self):
         self.labelDate.setText("")
         if self.buttonDate.isEnabled():
@@ -528,3 +521,70 @@ class _new_Watched_Film(MyWindowFormat):
         self.wind = Age_MovieRatingApp()
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
+    def insert_data(self):
+        try:
+            # Підключення до бази даних PostgreSQL
+            import psycopg2
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                database="Film_Series",
+                user="postgres",
+                password="postgresql"
+            )
+
+            # Getting text from QPlainTextEdit widgets
+            movie_name = self.line_edit1.text()
+            genre = self.line_edit4.toPlainText()
+            movie_rating = self.line_edit5.toPlainText()
+            age_restrictions = self.line_edit6.toPlainText()
+            movie_description = self.line_edit3.toPlainText()
+
+            # Check if any of the values are empty
+            if not movie_name or not genre or not movie_rating or not age_restrictions or not movie_description:
+                # Show a modal message box
+                QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
+                return  # Exit the function if any field is empty
+            elif self.labelDate.text() == "":
+                QMessageBox.critical(self, "Error",
+                                 "Оберіть дату додавання фільма")
+            else:
+                pass
+
+            # Виконання SQL-запиту для вставки даних
+            cursor = conn.cursor()
+
+            import random
+            def generate_unique_id():
+                while True:
+                    unique_id = random.randint(10000, 99999)
+
+                    # Check if the generated ID exists in the database
+                    cursor.execute("SELECT COUNT(*) FROM New_Watched_Film_List WHERE unique_id = %s", (unique_id,))
+                    count = cursor.fetchone()[0]
+
+                    if count == 0:
+                        return unique_id
+
+            unique_id = generate_unique_id()
+            query = "INSERT INTO New_Watched_Film_List (unique_id, movie_name, date_added, genre, movie_rating, age_restrictions, movie_description) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            values = (
+                unique_id,
+                movie_name,
+                self.labelDate.text(),
+                genre,
+                movie_rating,
+                age_restrictions,
+                movie_description
+            )
+            cursor.execute(query, values)
+
+            # Застосування змін до бази даних
+            conn.commit()
+
+            # Закриття курсора та з'єднання
+            cursor.close()
+            conn.close()
+        except psycopg2.Error as e:
+            print(f"Помилка підключення до PostgreSQL: {e}")
+
