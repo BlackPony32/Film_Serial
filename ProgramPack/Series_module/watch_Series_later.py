@@ -100,23 +100,20 @@ class _new_Series_later(MyWindowFormat):
             '''
         )
         button2.move(620, 600)
-        #button2.clicked.connect(self.open_newSeries)
+        button2.clicked.connect(self.insert_data)
 
-        # на 200 пікселів вниз змістив
         # ______________Назва серіала і поле для вводу назви_________________
-        line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
-        label2 = QLabel(self)
-
         label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: lightgray")
         label1.setText("Назва серіала")
         label1.setFixedSize(200, 30)
         label1.move(45, 195)
 
-        line_edit1.setPlaceholderText("Введіть назву серіала")
-        line_edit1.setFont(QFont("Arial", 13))
-        line_edit1.setStyleSheet(
+        self.line_edit1 = QLineEdit(self)
+        self.line_edit1.setPlaceholderText("Введіть назву серіала")
+        self.line_edit1.setFont(QFont("Arial", 13))
+        self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -131,10 +128,11 @@ class _new_Series_later(MyWindowFormat):
             }
             '''
         )
-        line_edit1.setFixedSize(685, 50)
-        line_edit1.move(290, 195)
+        self.line_edit1.setFixedSize(685, 50)
+        self.line_edit1.move(290, 195)
 
         # ___________________Блок додавання дати_____________________________________________
+        label2 = QLabel(self)
         label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: lightgray")
         label2.setText("Оберіть дату додавання серіала")
@@ -181,12 +179,10 @@ class _new_Series_later(MyWindowFormat):
         self.buttonCount.setText("Кількість сезонів: ")
         self.buttonCount.setFont(QFont("Arial", 13))
         self.buttonCount.setFixedSize(290, 45)
-        # self.buttonCount.start_animation()
         self.buttonCount.move(550, 305)
         self.buttonCount.clicked.connect(self.Season_Quantity_open)
 
         # _______________________Блок опису серіала____________________________________________
-        line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
         label3.setFont(QFont("Arial", 15))
         label3.setStyleSheet("color: lightgray")
@@ -194,9 +190,10 @@ class _new_Series_later(MyWindowFormat):
         label3.setFixedSize(250, 30)
         label3.move(45, 415)
 
-        line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
-        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
-        line_edit3.setStyleSheet(
+        self.line_edit3 = QPlainTextEdit(self)
+        self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
+        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -211,8 +208,8 @@ class _new_Series_later(MyWindowFormat):
             }
             '''
         )
-        line_edit3.setFixedSize(700, 80)
-        line_edit3.move(270, 415)
+        self.line_edit3.setFixedSize(700, 80)
+        self.line_edit3.move(270, 415)
         # ___________________________________________Кінець коду елементів__________________________
 
     def open_newSeries(self):
@@ -353,3 +350,78 @@ class _new_Series_later(MyWindowFormat):
         self.wind = SeriesSeasonSelection()
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
+    def insert_data(self):
+        try:
+            # Підключення до бази даних PostgreSQL
+            import psycopg2
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                database="Film_Series",
+                user="postgres",
+                password="postgresql"
+            )
+
+            # Getting text from QPlainTextEdit widgets
+            series_name = self.line_edit1.text()
+            series_description = self.line_edit3.toPlainText()
+
+            # Check if any of the values are empty
+            if not series_name or not series_description or self.labelDate.text() == "" or self.labelCount.text() == "":
+                # Show a modal message box
+                QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
+                return  # Exit the function if any field is empty
+
+            # Виконання SQL-запиту для вставки даних
+            cursor = conn.cursor()
+
+            import random
+            def generate_unique_id():
+                while True:
+                    unique_id = random.randint(10000, 99999)
+
+                    # Check if the generated ID exists in the database
+                    cursor.execute("SELECT COUNT(*) FROM Series_later_list WHERE unique_id = %s", (unique_id,))
+                    count = cursor.fetchone()[0]
+
+                    if count == 0:
+                        return unique_id
+
+            unique_id = generate_unique_id()
+            query = "INSERT INTO Series_later_list (unique_id, series_name, date_added,season_quantity ,series_description) VALUES (%s, %s, %s, %s, %s)"
+            values = (
+                unique_id,
+                series_name,
+                self.labelDate.text(),
+                self.labelCount.text(),
+                series_description
+            )
+            cursor.execute(query, values)
+
+            # Застосування змін до бази даних
+            conn.commit()
+
+            # Закриття курсора та з'єднання
+            cursor.close()
+            conn.close()
+            QMessageBox.information(self, "Успіх", "Серіал успішно додано!")
+            # ___________________Стерти лейбл сезонів____________________________________
+            try:
+                with open(self.file_path40, 'w', encoding='utf-8') as file:
+                    pass  # Writing nothing truncates the file (clears its content)
+
+            except Exception as e:
+                print(f"Error clearing the file: {e}")
+            from ProgramPack.Series_module.Watch_series_later_List import _Watch_Series_LaterList
+            self._Watch_Series_LaterList = _Watch_Series_LaterList()
+            self._Watch_Series_LaterList.show()
+            self.close()
+        except psycopg2.Error as e:
+            # ___________________Стерти лейбл сезонів____________________________________
+            try:
+                with open(self.file_path40, 'w', encoding='utf-8') as file:
+                    pass  # Writing nothing truncates the file (clears its content)
+
+            except Exception as e:
+                print(f"Error clearing the file: {e}")
+            QMessageBox.critical(self, "Помилка", f"Помилка підключення до Бази даних: {e}")

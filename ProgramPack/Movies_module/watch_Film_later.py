@@ -89,7 +89,7 @@ class _new_Film_later(MyWindowFormat):
         )
         button2.setFixedSize(350, 60)
         button2.move(620, 600)
-        button2.clicked.connect(self.open_newSeries)
+        button2.clicked.connect(self.insert_data)
 
         # ___________________Лейбл про анегдот та поле для виводу випадкового анегдоту______________________________
         label0 = QLabel(self)
@@ -126,10 +126,10 @@ class _new_Film_later(MyWindowFormat):
         labelAnec.move(45, 45)
 
         # ______________Назва фільма і поле для вводу назви_________________
-        line_edit1 = QLineEdit(self)
+        self.line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
         label2 = QLabel(self)
-        line_edit3 = QPlainTextEdit(self)
+        self.line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
 
         label1.setFont(QFont("Arial", 15))
@@ -138,9 +138,9 @@ class _new_Film_later(MyWindowFormat):
         label1.setFixedSize(200, 30)
         label1.move(45, 120)
 
-        line_edit1.setPlaceholderText("Введіть назву фільма")
-        line_edit1.setFont(QFont("Arial", 13))
-        line_edit1.setStyleSheet(
+        self.line_edit1.setPlaceholderText("Введіть назву фільма")
+        self.line_edit1.setFont(QFont("Arial", 13))
+        self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -155,8 +155,8 @@ class _new_Film_later(MyWindowFormat):
             }
             '''
         )
-        line_edit1.setFixedSize(685, 50)
-        line_edit1.move(290, 120)
+        self.line_edit1.setFixedSize(685, 50)
+        self.line_edit1.move(290, 120)
 
         label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: lightgray")
@@ -185,9 +185,9 @@ class _new_Film_later(MyWindowFormat):
         label3.setFixedSize(250, 30)
         label3.move(45, 265)
 
-        line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
-        line_edit3.setStyleSheet(
+        self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
+        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -202,8 +202,8 @@ class _new_Film_later(MyWindowFormat):
             }
             '''
         )
-        line_edit3.setFixedSize(700, 80)
-        line_edit3.move(270, 265)
+        self.line_edit3.setFixedSize(700, 80)
+        self.line_edit3.move(270, 265)
 
     def open_newSeries(self):
         from ProgramPack.Movies_module.Add_new_Film import new_Film
@@ -279,3 +279,69 @@ class _new_Film_later(MyWindowFormat):
         random_anecdote = random.choice(anecdotes)
 
         return random_anecdote['text']
+    def insert_data(self):
+        try:
+            # Підключення до бази даних PostgreSQL
+            import psycopg2
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                database="Film_Series",
+                user="postgres",
+                password="postgresql"
+            )
+
+            # Getting text from QPlainTextEdit widgets
+            movie_name = self.line_edit1.text()
+            movie_description = self.line_edit3.toPlainText()
+
+            # Check if any of the values are empty
+            if not movie_name or not movie_description:
+                # Show a modal message box
+                QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
+                return  # Exit the function if any field is empty
+            elif self.labelDate.text() == "":
+                QMessageBox.critical(self, "Error",
+                                 "Оберіть дату додавання фільма")
+            else:
+                pass
+
+            # Виконання SQL-запиту для вставки даних
+            cursor = conn.cursor()
+
+            import random
+            def generate_unique_id():
+                while True:
+                    unique_id = random.randint(10000, 99999)
+
+                    # Check if the generated ID exists in the database
+                    cursor.execute("SELECT COUNT(*) FROM Movie_later_list WHERE unique_id = %s", (unique_id,))
+                    count = cursor.fetchone()[0]
+
+                    if count == 0:
+                        return unique_id
+
+            unique_id = generate_unique_id()
+            query = "INSERT INTO Movie_later_list (unique_id, title, release_date,description) VALUES (%s, %s, %s, %s)"
+            values = (
+                unique_id,
+                movie_name,
+                self.labelDate.text(),
+                movie_description
+            )
+            cursor.execute(query, values)
+
+            # Застосування змін до бази даних
+            conn.commit()
+
+            # Закриття курсора та з'єднання
+            cursor.close()
+            conn.close()
+            QMessageBox.information(self, "Успіх", "Фільм успішно додано!")
+
+            from ProgramPack.Movies_module.Watch_Film_later_List import _Watch_Film_LaterList
+            self._Watch_Film_LaterList = _Watch_Film_LaterList()
+            self._Watch_Film_LaterList.show()
+            self.close()
+        except psycopg2.Error as e:
+            QMessageBox.critical(self, "Помилка", f"Помилка підключення до Бази даних: {e}")

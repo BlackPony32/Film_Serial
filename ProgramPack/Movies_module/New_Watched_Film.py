@@ -540,16 +540,12 @@ class _new_Watched_Film(MyWindowFormat):
             age_restrictions = self.line_edit6.toPlainText()
             movie_description = self.line_edit3.toPlainText()
 
-            # Check if any of the values are empty
-            if not movie_name or not genre or not movie_rating or not age_restrictions or not movie_description:
+            if not movie_name or not  genre \
+                    or not movie_rating or not age_restrictions or not movie_description or self.labelDate.text() == "":
                 # Show a modal message box
                 QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
                 return  # Exit the function if any field is empty
-            elif self.labelDate.text() == "":
-                QMessageBox.critical(self, "Error",
-                                 "Оберіть дату додавання фільма")
-            else:
-                pass
+            # Check if any of the values are empty
 
             # Виконання SQL-запиту для вставки даних
             cursor = conn.cursor()
@@ -585,6 +581,37 @@ class _new_Watched_Film(MyWindowFormat):
             # Закриття курсора та з'єднання
             cursor.close()
             conn.close()
+            QMessageBox.information(self, "Успіх", "Фільм успішно додано!")
+            self.cleaning()
+            from ProgramPack.Movies_module.WatchedFilm_List import _WatchedFilmList
+            self._WatchedFilmList = _WatchedFilmList()
+            self._WatchedFilmList.show()
+            self.close()
         except psycopg2.Error as e:
-            print(f"Помилка підключення до PostgreSQL: {e}")
+            self.cleaning()
+            QMessageBox.critical(self, "Помилка", f"Помилка підключення до Бази даних: {e}")
+
+    def cleaning(self):
+        # ___________________Стерти поле жанрів_______________________________________________
+        try:
+            with open(self.file_path, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле оцінки_______________________________________________
+        try:
+            with open(self.file_path1, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле вікового рейтингу____________________________________
+        try:
+            with open(self.file_path2, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+
 

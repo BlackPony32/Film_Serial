@@ -97,11 +97,11 @@ class _new_Watched_Series(MyWindowFormat):
         )
         button2.setFixedSize(350, 60)
         button2.move(620, 650)
-        #button2.clicked.connect(self.open_newSeries)
+        button2.clicked.connect(self.insert_data)
 
         # ______________Назва серіала і поле для вводу назви_________________
-        line_edit1 = QLineEdit(self)
-        line_edit1.setStyleSheet(
+        self.line_edit1 = QLineEdit(self)
+        self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -126,9 +126,9 @@ class _new_Watched_Series(MyWindowFormat):
         label1.setFixedSize(200, 30)
         label1.move(45, 5)
 
-        line_edit1.setPlaceholderText("Введіть назву серіала")
-        line_edit1.setFixedSize(685, 50)
-        line_edit1.move(290, 5)
+        self.line_edit1.setPlaceholderText("Введіть назву серіала")
+        self.line_edit1.setFixedSize(685, 50)
+        self.line_edit1.move(290, 5)
 
         # ___________________Блок додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
@@ -181,7 +181,7 @@ class _new_Watched_Series(MyWindowFormat):
         # self.buttonCount.start_animation()
         self.buttonCount.move(550, 85)
         self.buttonCount.clicked.connect(self.Season_Quantity_open)
-        # _______________________________Статус серіала серіала________________________________
+        # _______________________________Статус серіала________________________________
         label7 = QLabel(self)
 
         label7.setFont(QFont("Arial", 15))
@@ -455,7 +455,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.update_line_edit6()
         # _______________________Блок опису серіала____________________________________________
-        line_edit3 = QPlainTextEdit(self)
+        self.line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
         label3.setFont(QFont("Arial", 15))
         label3.setStyleSheet("color: lightgray")
@@ -463,9 +463,9 @@ class _new_Watched_Series(MyWindowFormat):
         label3.setFixedSize(250, 30)
         label3.move(45, 555)
 
-        line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
-        line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
-        line_edit3.setStyleSheet(
+        self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
+        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
+        self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
                 background-color: #FDFD96;  /* Світло-жовтий фон */
@@ -480,62 +480,13 @@ class _new_Watched_Series(MyWindowFormat):
             }
             '''
         )
-        line_edit3.setFixedSize(700, 80)
-        line_edit3.move(270, 555)
+        self.line_edit3.setFixedSize(700, 80)
+        self.line_edit3.move(270, 555)
         # ___________________________________________Кінець коду елементів__________________________
     def open_newSeries(self):
         from ProgramPack.Series_module.Add_new_Series import new_Series
 
-        # ___________________Стерти поле жанрів_______________________________________________
-        try:
-            with open(self.file_path, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        # ___________________Стерти поле оцінки_______________________________________________
-        try:
-            with open(self.file_path1, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        # ___________________Стерти поле вікового рейтингу____________________________________
-        try:
-            with open(self.file_path2, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-
-        # ___________________Стерти лейбл сезонів____________________________________
-        try:
-            with open(self.file_path40, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        # ___________________Стерти поле статусу серіала______________________________
-        try:
-            with open(self.file_path3, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        # ___________________Стерти поле режисерів____________________________________
-        try:
-            with open(self.file_path4, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        # ___________________Стерти поле акторів____________________________________
-        try:
-            with open(self.file_path5, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
+        self.cleaning()
 
         self.newSeries = new_Series()
         self.newSeries.show()
@@ -642,15 +593,6 @@ class _new_Watched_Series(MyWindowFormat):
         self.wind = GenreSelectionApp(genres)
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
-        '''Старий формат считування json file 
-        with open(":/Genres.json", "r", encoding='utf-8') as file:
-            genres_data = json.load(file)
-            genres = genres_data["genres"]
-
-        self.wind = GenreSelectionApp(genres)
-        self.wind.setWindowModality(Qt.ApplicationModal)
-        self.wind.show()
-        '''
     def update_line_edit4(self):
         #file = QFile(self.file_path)
         try:
@@ -737,3 +679,132 @@ class _new_Watched_Series(MyWindowFormat):
         self.wind = SeriesSeasonSelection()
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
+    def insert_data(self):
+        try:
+            # Підключення до бази даних PostgreSQL
+            import psycopg2
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                database="Film_Series",
+                user="postgres",
+                password="postgresql"
+            )
+
+            # Getting text from QPlainTextEdit widgets
+            series_name = self.line_edit1.text()
+            series_status = self.line_edit7.toPlainText()
+            series_directors = self.line_edit8.toPlainText()
+            series_actors = self.line_edit9.toPlainText()
+            series_genre = self.line_edit4.toPlainText()
+            series_mark = self.line_edit5.toPlainText()
+            age = self.line_edit6.toPlainText()
+            series_description = self.line_edit3.toPlainText()
+
+            if not series_name or not series_status or not series_directors or not series_actors or not series_genre\
+                    or not series_mark or not age or not series_description or self.labelDate.text() == "" or self.labelCount.text() == "":
+                # Show a modal message box
+                QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
+                return  # Exit the function if any field is empty
+            # Check if any of the values are empty
+
+
+            # Виконання SQL-запиту для вставки даних
+            cursor = conn.cursor()
+
+            import random
+            def generate_unique_id():
+                while True:
+                    unique_id = random.randint(10000, 99999)
+
+                    # Check if the generated ID exists in the database
+                    cursor.execute("SELECT COUNT(*) FROM Watched_Series_list WHERE unique_id = %s", (unique_id,))
+                    count = cursor.fetchone()[0]
+
+                    if count == 0:
+                        return unique_id
+
+            unique_id = generate_unique_id()
+            query = "INSERT INTO Watched_Series_list (unique_id, series_name, date_added, season_quantity, series_status," \
+                    " series_directors, series_actors, series_genre, series_mark, age, series_description) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (
+                unique_id,
+                series_name,
+                self.labelDate.text(),
+                self.labelCount.text(),
+                series_status,
+                series_directors,
+                series_actors,
+                series_genre,
+                series_mark,
+                age,
+                series_description
+            )
+            cursor.execute(query, values)
+
+            # Застосування змін до бази даних
+            conn.commit()
+
+            # Закриття курсора та з'єднання
+            cursor.close()
+            conn.close()
+            QMessageBox.information(self, "Успіх", "Серіал успішно додано!")
+            self.cleaning()
+            from ProgramPack.Series_module.Watched_series_List import _Watched_Series_List
+            self._Watched_Series_List = _Watched_Series_List()
+            self._Watched_Series_List.show()
+            self.close()
+        except psycopg2.Error as e:
+            self.cleaning()
+            QMessageBox.critical(self, "Помилка", f"Помилка підключення до Бази даних: {e}")
+    def cleaning(self):
+        # ___________________Стерти поле жанрів_______________________________________________
+        try:
+            with open(self.file_path, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле оцінки_______________________________________________
+        try:
+            with open(self.file_path1, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле вікового рейтингу____________________________________
+        try:
+            with open(self.file_path2, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+
+        # ___________________Стерти лейбл сезонів____________________________________
+        try:
+            with open(self.file_path40, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле статусу серіала______________________________
+        try:
+            with open(self.file_path3, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле режисерів____________________________________
+        try:
+            with open(self.file_path4, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
+        # ___________________Стерти поле акторів____________________________________
+        try:
+            with open(self.file_path5, 'w', encoding='utf-8') as file:
+                pass  # Writing nothing truncates the file (clears its content)
+
+        except Exception as e:
+            print(f"Error clearing the file: {e}")
