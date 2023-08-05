@@ -1,9 +1,9 @@
 import os
 import sys
 
-from IPython.external.qt_for_kernel import QtGui
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QLabel, QComboBox, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox
 from ProgramPack.src.MyButton import _MyButton
 
 class Age_MovieRatingApp(QMainWindow):
@@ -18,7 +18,7 @@ class Age_MovieRatingApp(QMainWindow):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width
@@ -28,44 +28,44 @@ class Age_MovieRatingApp(QMainWindow):
 
         self.ratings = {
             "Не обрано": "Не обрано",
-            "G": "Для всіх",
-            "PG": "Батькам рекомендовано",
-            "PG-13": "Для дітей від 13 років",
-            "R": "Для дорослих",
-            "NC-17": "Тільки для дорослих"
+            "G": "G - Для всіх",
+            "PG": "PG - Батькам рекомендовано",
+            "PG-13": "PG-13 Для дітей від 13 років",
+            "R": "R - Для дорослих",
+            "NC-17": "NC-17 Тільки для дорослих"
         }
 
         layout = QVBoxLayout()
 
         self.rating_combo = QComboBox()
         self.rating_combo.setStyleSheet(
-    '''
-    QComboBox {
-        background-color: #FFFFFF;  /* Білий фон */
-        border: 1px solid #BDBDBD;  /* Сіра рамка товщиною 1px */
-        border-radius: 5px;
-        padding: 6px;
-        font-size: 14px;
-        color: #333333;  /* Чорний колір тексту */
-    }
-    QComboBox::drop-down {
-        subcontrol-origin: padding;
-        subcontrol-position: top right;
-        width: 20px;
-        border-left-width: 1px;
-        border-left-color: #BDBDBD;  /* Сіра рамка товщиною 1px */
-        border-left-style: solid;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        background: #FDFD96;  /* Жовтий фон для стрілки вниз */
-    }
-    QComboBox::down-arrow {
-        image: url(:/images/Down_arrow.png);  /* Зображення для стрілки вниз */
-        width: 20px;
-        height: 20px;
-    }
-    '''
-)
+        '''
+        QComboBox {
+            background-color: #FFFFFF;  /* Білий фон */
+            border: 1px solid #BDBDBD;  /* Сіра рамка товщиною 1px */
+            border-radius: 5px;
+            padding: 6px;
+            font-size: 14px;
+            color: #333333;  /* Чорний колір тексту */
+        }
+        QComboBox::drop-down {
+            subcontrol-origin: padding;
+            subcontrol-position: top right;
+            width: 20px;
+            border-left-width: 1px;
+            border-left-color: #BDBDBD;  /* Сіра рамка товщиною 1px */
+            border-left-style: solid;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            background: #FDFD96;  /* Жовтий фон для стрілки вниз */
+        }
+        QComboBox::down-arrow {
+            image: url(:/images/Down_arrow.png);  /* Зображення для стрілки вниз */
+            width: 20px;
+            height: 20px;
+        }
+        '''
+        )
 
         self.rating_combo.addItems(self.ratings.keys())
         layout.addWidget(QLabel("Виберіть віковий рейтинг фільму:"))

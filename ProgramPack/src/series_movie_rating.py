@@ -1,9 +1,9 @@
 import os
 import sys
 
-from IPython.external.qt_for_kernel import QtGui
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QWidget, \
+from PyQt5.QtWidgets import QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QWidget, \
     QMessageBox
 from ProgramPack.src.MyButton import _MyButton
 
@@ -19,7 +19,7 @@ class MovieRatingApp(QMainWindow):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width
@@ -56,7 +56,7 @@ class MovieRatingApp(QMainWindow):
                 color: #333333;  /* Чорний колір тексту */
             }
             '''
-)
+            )
             hbox.addWidget(comment_label)
 
             rating_button = _MyButton(f"{rating}/10")
@@ -98,15 +98,6 @@ class MovieRatingApp(QMainWindow):
         except Exception as e:
             print(f"Error writing to the file: {e}")
             QMessageBox.critical(self, 'Error', f'Error saving text:\n{str(e)}')
-        #____________
-        '''
-        try:
-            with open(":/txt/movie_rating_result.txt", "w", encoding="utf-8") as file:
-                file.write(self.current_result)
-            #self.result_label.setText("Результат збережено у файл 'movie_rating_result.txt'")
-        except Exception as e:
-            self.result_label.setText("Помилка збереження у файл!")
-        self.close()
-        '''
+
 
 

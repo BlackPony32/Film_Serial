@@ -1,5 +1,6 @@
 import sys
-
+import os
+from decouple import config
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QDesktopWidget, QTableWidgetItem, \
@@ -18,12 +19,6 @@ class _Watched_Series_List(MyWindowFormat):
         self.center()
         self.initialize()
 
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
-
     def center(self):
         frame_geometry = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -31,9 +26,16 @@ class _Watched_Series_List(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/light_cinema2.png");
+            }
+            '''
+        )
         label1 = QLabel(self)
         label1.setFont(QFont("Arial", 15))
-        label1.setStyleSheet("color: black")
+        label1.setStyleSheet("color: lightgray")
         label1.setText("Пошуковий фільтр")
         label1.setFixedSize(300, 30)
         label1.move(45, 20)
@@ -75,8 +77,8 @@ class _Watched_Series_List(MyWindowFormat):
         self.connect_to_postgresql()
 
         # Додайте кнопки
-        button_layout = QHBoxLayout()
-        self.button1 = QPushButton("Видалити серіал", self)
+        self.button1 = _MyButton(self)
+        self.button1.setText("Видалити серіал")
         self.button1.setStyleSheet(
             '''
             QPushButton {
@@ -101,7 +103,8 @@ class _Watched_Series_List(MyWindowFormat):
         self.button1.move(45, 580)
         self.button1.clicked.connect(self.handle_delete_button_click)
 
-        self.button2 = QPushButton("Назад", self)
+        self.button2 = _MyButton(self)
+        self.button2.setText("Назад")
         self.button2.setStyleSheet(
             '''
             QPushButton {
@@ -126,7 +129,8 @@ class _Watched_Series_List(MyWindowFormat):
         self.button2.move(365, 650)
         self.button2.clicked.connect(self.back)
 
-        self.button3 = QPushButton("Оновити дані таблиці", self)
+        self.button3 = _MyButton(self)
+        self.button3.setText("Оновити дані таблиці")
         self.button3.setStyleSheet(
             '''
             QPushButton {
@@ -153,13 +157,19 @@ class _Watched_Series_List(MyWindowFormat):
 
     def connect_to_postgresql(self):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
             # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
             # Виконання SQL-запиту та виведення даних у таблиці
@@ -175,24 +185,35 @@ class _Watched_Series_List(MyWindowFormat):
 
             # Налаштування стилю та вигляду таблиці
             self.table_widget.setStyleSheet("""
-                QTableWidget {
-                    background-color: white;
-                    alternate-background-color: #f2f2f2;
-                    color: #333;
-                }
+                            QTableWidget {
+                                background-color: #1e1e1e;
+                                border: 1px solid #333333;
+                                border-radius: 10px;
+                            }
 
-                QTableWidget::item:selected {
-                    background-color: #0078d4;
-                    color: white;
-                }
-            """)
+                            QTableWidget::item {
+                                color: #594304;
+                                background-color: #e0224b;
+                                margin-top: 2px;
+                                border-radius: 9px;
+                                padding-left: 5px;
+                                font-weight: bold;
+                            }
+
+                            QTableWidget::item:selected {
+                                background-color: #ffff00;
+                                color: #594304;
+                                font-weight: bold;
+                                font-size: 16px;
+                            }
+                        """)
 
             # Налаштування заголовків стовпців (без unique_id)
-            header_labels = ["ID", "Назва серіала", "Дата додавання", "Кількість сезонів", "Статус серіала", "Режисери", "Актори", "Жанр серіала", "Оцінка", "Вікові обмеження", "Замітки по серіалу"]
+            header_labels = ["ID", "Назва серіалу", "Дата додавання", "Кількість сезонів", "Статус серіалу", "Режисери", "Актори", "Жанр серіала", "Оцінка", "Вікові обмеження", "Замітки по серіалу"]
             self.table_widget.setHorizontalHeaderLabels(header_labels)
 
             header = self.table_widget.horizontalHeader()
-            column_widths = [50, 200, 130, 150, 150, 250, 350, 250, 250, 150, 570]  # Встановіть бажані довжини для кожного стовпця
+            column_widths = [70, 200, 130, 150, 150, 250, 350, 250, 250, 150, 550]  # Встановіть бажані довжини для кожного стовпця
             for col, width in enumerate(column_widths):
                 header.setSectionResizeMode(col, QHeaderView.Fixed)
                 header.resizeSection(col, width)
@@ -211,7 +232,7 @@ class _Watched_Series_List(MyWindowFormat):
             cursor.close()
             conn.close()
         except psycopg2.Error as e:
-            self.setWindowTitle("Помилка підключення до PostgreSQL")
+            self.setWindowTitle("Помилка підключення до бази даних")
             self.table_widget.setRowCount(0)
             self.table_widget.setColumnCount(0)
             self.table_widget.setHorizontalHeaderLabels(["Error"])
@@ -220,12 +241,19 @@ class _Watched_Series_List(MyWindowFormat):
 
     def update_database(self):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
             cursor = conn.cursor()
 
@@ -270,12 +298,19 @@ class _Watched_Series_List(MyWindowFormat):
 
     def delete_movie(self, unique_id):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
             cursor = conn.cursor()
 

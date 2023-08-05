@@ -1,9 +1,8 @@
 import os
 import sys
-
-from IPython.external.qt_for_kernel import QtGui
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QComboBox, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QLabel, QComboBox, QVBoxLayout, QHBoxLayout, QWidget, QMessageBox
 from ProgramPack.src.MyButton import _MyButton
 
 class _SeriesStatus(QMainWindow):
@@ -18,7 +17,7 @@ class _SeriesStatus(QMainWindow):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width
@@ -41,7 +40,7 @@ class _SeriesStatus(QMainWindow):
 
         self.rating_combo = QComboBox()
         self.rating_combo.setStyleSheet(
-    '''
+        '''
     QComboBox {
         background-color: #FFFFFF;  /* Білий фон */
         border: 1px solid #BDBDBD;  /* Сіра рамка товщиною 1px */
@@ -65,9 +64,9 @@ class _SeriesStatus(QMainWindow):
         image: url(:/images/Down_arrow.png);  /* Зображення для стрілки вниз */
         width: 20px;
         height: 20px;
-    }
-    '''
-)
+        }
+        '''
+        )
         self.rating_combo.addItems(self.ratings.keys())
         layout.addWidget(QLabel("Оберіть статус серіала:"))
         layout.addWidget(self.rating_combo)

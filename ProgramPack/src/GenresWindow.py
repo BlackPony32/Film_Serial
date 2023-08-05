@@ -2,10 +2,9 @@ import os
 import sys
 import json
 
-from IPython.external.qt_for_kernel import QtGui
-from PyQt5.QtCore import QTextStream, QFile, QIODevice
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, QPushButton, \
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, \
     QPlainTextEdit, QMessageBox, QFileDialog
 from ProgramPack.src.MyButton import _MyButton
 
@@ -27,7 +26,7 @@ class GenreSelectionApp(QWidget):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width

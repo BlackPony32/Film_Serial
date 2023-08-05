@@ -1,5 +1,5 @@
 import os
-
+from decouple import config
 from PyQt5.QtCore import QFileSystemWatcher, QDate, Qt, QFile, QTextStream
 from PyQt5.QtWidgets import QDesktopWidget, QLineEdit, QLabel, QPlainTextEdit, QCalendarWidget, QWidget, QVBoxLayout, \
     QMessageBox
@@ -16,12 +16,6 @@ class _new_Series_later(MyWindowFormat):
 
         self.center()
         self.initialize()
-
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
 
     def center(self):
         frame_geometry = self.frameGeometry()
@@ -102,16 +96,16 @@ class _new_Series_later(MyWindowFormat):
         button2.move(620, 600)
         button2.clicked.connect(self.insert_data)
 
-        # ______________Назва серіала і поле для вводу назви_________________
+        # ______________Назва серіалу і поле для вводу назви_________________
         label1 = QLabel(self)
         label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: lightgray")
-        label1.setText("Назва серіала")
+        label1.setText("Назва серіалу")
         label1.setFixedSize(200, 30)
         label1.move(45, 195)
 
         self.line_edit1 = QLineEdit(self)
-        self.line_edit1.setPlaceholderText("Введіть назву серіала")
+        self.line_edit1.setPlaceholderText("Введіть назву серіалу")
         self.line_edit1.setFont(QFont("Arial", 13))
         self.line_edit1.setStyleSheet(
             '''
@@ -135,7 +129,7 @@ class _new_Series_later(MyWindowFormat):
         label2 = QLabel(self)
         label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: lightgray")
-        label2.setText("Оберіть дату додавання серіала")
+        label2.setText("Оберіть дату додавання серіалу")
         label2.setFixedSize(570, 30)
         label2.move(45, 255)
 
@@ -148,8 +142,7 @@ class _new_Series_later(MyWindowFormat):
         self.labelDate.move(370, 305)
 
         self.buttonDate = _MyButton(self)
-        self.buttonDate.setText("Дата додавання серіала")
-        self.buttonDate.setFont(QFont("Arial", 14))
+        self.buttonDate.setText("Дата додавання серіалу")
         self.buttonDate.setFixedSize(300, 45)
         self.buttonDate.move(45, 305)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
@@ -163,7 +156,7 @@ class _new_Series_later(MyWindowFormat):
 
         self.labelCount = QLabel(self)
         self.labelCount.setFont(QFont("Arial", 15))
-        self.labelCount.setStyleSheet("color: white")  # Set transparent background
+        self.labelCount.setStyleSheet("color: white")
         self.labelCount.setFixedSize(200, 45)
         self.labelCount.move(850, 305)
 
@@ -177,7 +170,6 @@ class _new_Series_later(MyWindowFormat):
 
         self.buttonCount = _MyButton(self)
         self.buttonCount.setText("Кількість сезонів: ")
-        self.buttonCount.setFont(QFont("Arial", 13))
         self.buttonCount.setFixedSize(290, 45)
         self.buttonCount.move(550, 305)
         self.buttonCount.clicked.connect(self.Season_Quantity_open)
@@ -192,7 +184,6 @@ class _new_Series_later(MyWindowFormat):
 
         self.line_edit3 = QPlainTextEdit(self)
         self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
-        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -228,7 +219,6 @@ class _new_Series_later(MyWindowFormat):
             from IPython.external.qt_for_kernel import QtGui
             self.calendar = QCalendarWidget()
             icon = QIcon(":/images/MovieIcon.jpg")
-
             # Встановлюємо картинку як іконку вікна
 
             width = 32  # Desired width
@@ -238,16 +228,16 @@ class _new_Series_later(MyWindowFormat):
             # Set the resized icon as the taskbar icon for the main window
 
             # self.calendar.setWindowModality(Qt.ApplicationModal)
-            self.calendar = QCalendarWidget()
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
 
             self.widget = QWidget()
+            self.widget.setWindowTitle("Оберіть дату додавання серіалу")
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
-            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setLayout(layout)
-            self.widget.setGeometry(200, 200, 300, 200)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
+            self.widget.setGeometry(200, 200, 450, 200)
             self.widget.show()
         except Exception as e:
             print("Exception in show_calendar:", e)
@@ -285,15 +275,7 @@ class _new_Series_later(MyWindowFormat):
         self.wind = GenreSelectionApp(genres)
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
-        '''Старий формат считування json file 
-        with open(":/Genres.json", "r", encoding='utf-8') as file:
-            genres_data = json.load(file)
-            genres = genres_data["genres"]
 
-        self.wind = GenreSelectionApp(genres)
-        self.wind.setWindowModality(Qt.ApplicationModal)
-        self.wind.show()
-        '''
     def update_line_edit4(self):
         #file = QFile(self.file_path)
         try:
@@ -320,16 +302,7 @@ class _new_Series_later(MyWindowFormat):
 
         except Exception as e:
             print(f"Error reading the file: {e}")
-        #__Формат для считування /qrc файлу
-        '''try:
-            with open(self.file_path2   , 'r', encoding='utf-8') as file:
-                text = file.read()
-                self.line_edit6.setPlainText(text)
-        except FileNotFoundError:
-            self.line_edit6.setPlainText("Файл не знайдено")
-        except Exception as e:
-            print("Exception in update_line_edit4:", e)
-            QMessageBox.critical(self, 'Помилка', f'Виникла помилка при оновленні вмісту:\n{str(e)}')'''
+
     def Rating_open(self):
         from ProgramPack.src.series_movie_rating import MovieRatingApp
 
@@ -354,12 +327,18 @@ class _new_Series_later(MyWindowFormat):
         try:
             # Підключення до бази даних PostgreSQL
             import psycopg2
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
             # Getting text from QPlainTextEdit widgets

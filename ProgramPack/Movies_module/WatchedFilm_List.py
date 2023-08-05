@@ -1,11 +1,12 @@
 import sys
-
+import os
+from decouple import config
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QDesktopWidget, QTableWidgetItem, \
-    QHeaderView, QHBoxLayout, QTableWidget, QScrollArea, QVBoxLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QLabel, QLineEdit, QPushButton, QDesktopWidget, QTableWidgetItem, \
+    QHeaderView, QHBoxLayout, QTableWidget, QScrollArea, QMessageBox
 import psycopg2
-from ProgramPack.src.MyButton import _MyButton
-from ProgramPack.src.MyWindowFormat import MyWindowFormat
+from ProgramPack.src import _MyButton, MyWindowFormat
 
 class _WatchedFilmList(MyWindowFormat):
     def __init__(self):
@@ -17,12 +18,6 @@ class _WatchedFilmList(MyWindowFormat):
         self.center()
         self.initialize()
 
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
-
     def center(self):
         frame_geometry = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -30,9 +25,16 @@ class _WatchedFilmList(MyWindowFormat):
         self.move(frame_geometry.topLeft())
 
     def initialize(self):
+        self.setStyleSheet(
+            '''
+            QMainWindow {
+                background-image: url(":/images/cinema1.png");
+            }
+            '''
+        )
         label1 = QLabel(self)
         label1.setFont(QFont("Arial", 15))
-        label1.setStyleSheet("color: black")
+        label1.setStyleSheet("color: lightgray")
         label1.setText("Пошуковий фільтр")
         label1.setFixedSize(300, 30)
         label1.move(45, 20)
@@ -59,13 +61,13 @@ class _WatchedFilmList(MyWindowFormat):
 
         # Додайте прокрутний віджет
         scroll_area = QScrollArea(self)
-        scroll_area.move(0,70)
+        scroll_area.move(0, 70)
         scroll_area.setFixedSize(1000, 500)
 
-        # Додайте таблицю в прокрутний віджет
         self.table_widget = QTableWidget(self)
-        self.table_widget.move(0,70)
         self.table_widget.setFixedSize(2000, 500)
+        self.table_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # Вимкнення горизонтальної прокрутки
+        scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(self.table_widget)
 
         # Підключення сигналу текстового поля до слоту для динамічного пошуку
@@ -74,7 +76,6 @@ class _WatchedFilmList(MyWindowFormat):
         self.connect_to_postgresql()
 
         # Додайте кнопки
-        button_layout = QHBoxLayout()
         self.button1 = QPushButton("Видалити фільм", self)
         self.button1.setStyleSheet(
             '''
@@ -152,13 +153,19 @@ class _WatchedFilmList(MyWindowFormat):
 
     def connect_to_postgresql(self):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
             # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
             # Виконання SQL-запиту та виведення даних у таблиці
@@ -175,17 +182,28 @@ class _WatchedFilmList(MyWindowFormat):
 
             # Налаштування стилю та вигляду таблиці
             self.table_widget.setStyleSheet("""
-                QTableWidget {
-                    background-color: white;
-                    alternate-background-color: #f2f2f2;
-                    color: #333;
-                }
+                            QTableWidget {
+                                background-color: #1e1e1e;
+                                border: 1px solid #333333;
+                                border-radius: 10px;
+                            }
 
-                QTableWidget::item:selected {
-                    background-color: #0078d4;
-                    color: white;
-                }
-            """)
+                            QTableWidget::item {
+                                color: #594304;
+                                background-color: #e0224b;
+                                margin-top: 2px;
+                                border-radius: 9px;
+                                padding-left: 5px;
+                                font-weight: bold;
+                            }
+
+                            QTableWidget::item:selected {
+                                background-color: #ffff00;
+                                color: #594304;
+                                font-weight: bold;
+                                font-size: 16px;
+                            }
+                        """)
 
             # Налаштування заголовків стовпців (без unique_id)
             header_labels = ["ID", "Назва фільма", "Дата додавання", "Жанр", "Оцінка фільма", "Вікові обмеження",
@@ -193,7 +211,7 @@ class _WatchedFilmList(MyWindowFormat):
             self.table_widget.setHorizontalHeaderLabels(header_labels)
 
             header = self.table_widget.horizontalHeader()
-            column_widths = [50, 200, 130, 250, 240, 400, 780]  # Встановіть бажані довжини для кожного стовпця
+            column_widths = [70, 200, 130, 250, 240, 400, 760]  # Встановіть бажані довжини для кожного стовпця
             for col, width in enumerate(column_widths):
                 header.setSectionResizeMode(col, QHeaderView.Fixed)
                 header.resizeSection(col, width)
@@ -221,12 +239,19 @@ class _WatchedFilmList(MyWindowFormat):
 
     def update_database(self):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
             cursor = conn.cursor()
 
@@ -265,12 +290,19 @@ class _WatchedFilmList(MyWindowFormat):
 
     def delete_movie(self, unique_id):
         try:
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
             cursor = conn.cursor()
 

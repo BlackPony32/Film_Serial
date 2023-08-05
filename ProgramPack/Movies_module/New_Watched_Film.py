@@ -1,13 +1,13 @@
 import json
 import os
-
+from decouple import config
 from PyQt5.QtCore import Qt, QDate, QFileSystemWatcher, QFile, QTextStream
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineEdit, \
     QMessageBox, QCalendarWidget, QPlainTextEdit
 from PyQt5.QtGui import QFont
-from ProgramPack.src.MyButton import _MyButton
-from ProgramPack.src.MyWindowFormat import MyWindowFormat
+from ProgramPack.src import _MyButton, MyWindowFormat
 import Image_resource_rc
+
 class _new_Watched_Film(MyWindowFormat):
     def __init__(self):
         super().__init__()
@@ -17,11 +17,6 @@ class _new_Watched_Film(MyWindowFormat):
         self.center()
         self.initialize()
 
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
     def center(self):
         frame_geometry = self.frameGeometry()
         center_point = QDesktopWidget().availableGeometry().center()
@@ -35,10 +30,8 @@ class _new_Watched_Film(MyWindowFormat):
             }
             '''
         )
-        # Set the background image using a style sheet
+        # фонове зображення
         self.setStyleSheet(self.styleSheet())
-        font = QFont()
-        font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
 
         #_____________Основні кнопки для переходу по сторінках і збереження даних в базу___________
         button1 = _MyButton(self)
@@ -94,20 +87,19 @@ class _new_Watched_Film(MyWindowFormat):
         button2.move(620, 600)
         button2.clicked.connect(self.insert_data)
 
-        #___________________Лейбл про анегдот та поле для виводу випадкового анегдоту_____________________________
+        #___________________Лейбл про анекдот та поле для виводу випадкового анегдоту_____________________________
         label0 = QLabel(self)
         labelAnec = QPlainTextEdit(self)
 
         label0.setFont(QFont("Arial", 15))
         label0.setStyleSheet("color: lightgray")
-        label0.setText("Невеликий анегдот на тематику фільмів (згенеровано АІ)")
+        label0.setText("Невеликий анекдот на тематику фільмів (згенеровано АІ)")
         label0.setFixedSize(795, 30)
         label0.move(45, 15)
 
         self.generate_random_anecdote()
         random_joke = self.generate_random_anecdote()
         labelAnec.setReadOnly(True)
-        labelAnec.setFont(QFont("Arial", 15))
         labelAnec.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -127,7 +119,7 @@ class _new_Watched_Film(MyWindowFormat):
         labelAnec.setFixedSize(930, 70)
         labelAnec.move(45, 45)
 
-        #______________Назва фільма і поле для вводу назви_________________
+        #______________Назва фільму і поле для вводу назви_________________
         self.line_edit1 = QLineEdit(self)
         label1 = QLabel(self)
         label2 = QLabel(self)
@@ -136,12 +128,11 @@ class _new_Watched_Film(MyWindowFormat):
 
         label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: lightgray")
-        label1.setText("Назва фільма")
+        label1.setText("Назва фільму")
         label1.setFixedSize(200, 30)
         label1.move(45, 120)
 
-        self.line_edit1.setPlaceholderText("Введіть назву фільма")
-        self.line_edit1.setFont(QFont("Arial", 13))
+        self.line_edit1.setPlaceholderText("Введіть назву фільму")
         self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
@@ -163,13 +154,13 @@ class _new_Watched_Film(MyWindowFormat):
         # ___________________Блок дати додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: lightgray")
-        label2.setText("Оберіть дату додавання фільма")
+        label2.setText("Оберіть дату додавання фільму")
         label2.setFixedSize(570, 30)
         label2.move(45, 175)
 
         self.labelDate = QLabel(self)
         self.labelDate.setFont(QFont("Arial", 15))
-        self.labelDate.setStyleSheet("color: white")  # Set transparent background
+        self.labelDate.setStyleSheet("color: white")
         self.current_date = QDate.currentDate()
         #self.labelDate.setText(self.current_date.toString("dd.MM.yyyy")) #баг про накладання дат
         self.labelDate.setFixedSize(200, 45)
@@ -177,11 +168,10 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання")
-        self.buttonDate.setFont(QFont("Arial", 14))
         self.buttonDate.setFixedSize(250, 45)
         self.buttonDate.move(45, 205)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
-        # _______________________Блок опису фільма____________________________________________
+        # _______________________Блок опису фільму____________________________________________
         label3.setFont(QFont("Arial", 15))
         label3.setStyleSheet("color: lightgray")
         label3.setText("Короткий опис")
@@ -189,7 +179,6 @@ class _new_Watched_Film(MyWindowFormat):
         label3.move(45, 265)
 
         self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -208,28 +197,24 @@ class _new_Watched_Film(MyWindowFormat):
         self.line_edit3.setFixedSize(700, 80)
         self.line_edit3.move(270, 265)
 
-        #_________________Блок опису жанру фільма______________________
+        #_________________Блок опису жанру фільму______________________
         label4 = QLabel(self)
-
         label4.setFont(QFont("Arial", 15))
         label4.setStyleSheet("color: lightgray")
-        label4.setText("Оберіть жанр фільма")
+        label4.setText("Оберіть жанр фільму")
         label4.setFixedSize(280, 30)
         label4.move(45, 345)
 
-        self.line_edit4 = QPlainTextEdit(self)
-        self.line_edit4.setPlaceholderText("Запишіть жанр фільма самостійно або оберіть з доступних")
         self.file_name = "data.txt"
         self.file_path = os.path.join(os.getcwd(), self.file_name)
-
         self.file_watcher = QFileSystemWatcher()
         self.file_watcher.addPath(self.file_path)
         self.file_watcher.fileChanged.connect(self.update_line_edit4)
 
-        self.update_line_edit4()
 
-        #_______________________________Блок жанрів фільма________________________________
-        self.line_edit4.setFont(QFont("Arial", 9))  # 13 норм розмір
+
+        self.line_edit4 = QPlainTextEdit(self)
+        self.line_edit4.setPlaceholderText("Запишіть жанр фільму самостійно або оберіть з доступних")
         self.line_edit4.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -247,25 +232,24 @@ class _new_Watched_Film(MyWindowFormat):
         )
         self.line_edit4.setFixedSize(280, 85)
         self.line_edit4.move(45, 385)
+        self.update_line_edit4()
 
         self.buttonGanre = _MyButton(self)
         self.buttonGanre.setText("Доступні жанри")
-        self.buttonGanre.setFont(QFont("Arial", 13))
         self.buttonGanre.setFixedSize(280, 55)
-        #self.buttonGanre.start_animation()
         self.buttonGanre.move(45, 480)
         self.buttonGanre.clicked.connect(self.Genres_open)
 
-        #________________________________________film rating(оцінка фільма)_______________________
+        #________________________________________film rating(оцінка фільму)_______________________
         label5 = QLabel(self)
         label5.setFont(QFont("Arial", 15))
         label5.setStyleSheet("color: lightgray")
-        label5.setText("Оберіть оцінку фільма")
+        label5.setText("Оберіть оцінку фільму")
         label5.setFixedSize(280, 30)
         label5.move(370, 345)
 
         self.line_edit5 = QPlainTextEdit(self)
-        self.line_edit5.setPlaceholderText("Запишіть оцінку фільма самостійно або скористайтесь запропонованою системою")
+        self.line_edit5.setPlaceholderText("Запишіть оцінку фільму самостійно або скористайтесь запропонованою системою")
         self.file_name1 = "movie_rating_result.txt"
         self.file_path1 = os.path.join(os.getcwd(), self.file_name1)
 
@@ -273,7 +257,6 @@ class _new_Watched_Film(MyWindowFormat):
         self.file_watcher1.addPath(self.file_path1)
         self.file_watcher1.fileChanged.connect(self.update_line_edit5)
 
-        self.line_edit5.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit5.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -294,9 +277,7 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.buttonRating = _MyButton(self)
         self.buttonRating.setText("Доступна система оцінювання")
-        self.buttonRating.setFont(QFont("Arial", 9))
         self.buttonRating.setFixedSize(280, 55)
-        #self.buttonRating.start_animation()
         self.buttonRating.move(370, 480)
         self.buttonRating.clicked.connect(self.Rating_open)
 
@@ -305,7 +286,7 @@ class _new_Watched_Film(MyWindowFormat):
         label6 = QLabel(self)
         label6.setFont(QFont("Arial", 15))
         label6.setStyleSheet("color: lightgray")
-        label6.setText("Віковий рейтинг фільма")
+        label6.setText("Віковий рейтинг фільму")
         label6.setFixedSize(280, 30)
         label6.move(690, 345)
 
@@ -319,7 +300,6 @@ class _new_Watched_Film(MyWindowFormat):
         self.file_watcher2.addPath(self.file_path2)
         self.file_watcher2.fileChanged.connect(self.update_line_edit6)
 
-        self.line_edit6.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit6.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -340,46 +320,39 @@ class _new_Watched_Film(MyWindowFormat):
 
         self.buttonAge = _MyButton(self)
         self.buttonAge.setText("Доступна система рейтингу")
-        self.buttonAge.setFont(QFont("Arial", 9))
         self.buttonAge.setFixedSize(280, 55)
-        #self.buttonAge.start_animation()
         self.buttonAge.move(690, 480)
         self.buttonAge.clicked.connect(self.Age_Rating_open)
 
         self.update_line_edit6()
         #___________________________________________Кінець коду елементів__________________________
-    def open_newSeries(self):                               # ШО ЦЕЙ КОД РОБИТЬ?
-        from ProgramPack.Movies_module.Add_new_Film import new_Film
 
-        self.newFilm = new_Film()
-        self.newFilm.show()
-        self.close()
     def show_calendar(self):
         try:
             from PyQt5.QtGui import QIcon
             from IPython.external.qt_for_kernel import QtGui
             self.calendar = QCalendarWidget()
             icon = QIcon(":/images/MovieIcon.jpg")
-
             # Встановлюємо картинку як іконку вікна
 
-            width = 32  # Desired width
-            height = 32  # Desired height
+            width = 32  # Бажана ширина
+            height = 32  # Бажана висота
             resized_icon = icon.pixmap(width, height).scaled(width, height)
 
-            # Set the resized icon as the taskbar icon for the main window
+            # Встановіть іконки зміненого розміру як іконку панелі завдань для головного вікна
 
             #self.calendar.setWindowModality(Qt.ApplicationModal)
-            self.calendar = QCalendarWidget()
+
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
 
             self.widget = QWidget()
+            self.widget.setWindowTitle("Оберіть дату додавання фільму")
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
-            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setLayout(layout)
-            self.widget.setGeometry(200, 200, 300, 200)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
+            self.widget.setGeometry(200, 200, 450, 200)
             self.widget.show()
         except Exception as e:
             print("Exception in show_calendar:", e)
@@ -410,11 +383,11 @@ class _new_Watched_Film(MyWindowFormat):
         import Image_resource_rc
         resource_path = ":/jsons/Filmanecdotes.json"
 
-        # Open and read the resource using QFile and QTextStream
+        # Відкрити та прочитати ресурс з допомогою QFile та QTextStream
         file = QFile(resource_path)
         if file.open(QFile.ReadOnly | QFile.Text):
             stream = QTextStream(file)
-            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            stream.setCodec("UTF-8")  # Встановіть кодування UTF-8
             anecdotes = json.loads(stream.readAll())
             file.close()
         random_anecdote = random.choice(anecdotes)
@@ -422,27 +395,7 @@ class _new_Watched_Film(MyWindowFormat):
         return random_anecdote['text']
     def open_newFilm(self):
         from ProgramPack.Movies_module.Add_new_Film import new_Film
-        #___________________Стерти поле жанрів_______________________________________________
-        try:
-            with open(self.file_path, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        #___________________Стерти поле оцінки_______________________________________________
-        try:
-            with open(self.file_path1, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
-        #___________________Стерти поле вікового рейтингу____________________________________
-        try:
-            with open(self.file_path2, 'w', encoding='utf-8') as file:
-                pass  # Writing nothing truncates the file (clears its content)
-
-        except Exception as e:
-            print(f"Error clearing the file: {e}")
+        self.cleaning()
 
         self.newFilm = new_Film()
         self.newFilm.show()
@@ -452,11 +405,11 @@ class _new_Watched_Film(MyWindowFormat):
         import Image_resource_rc
         resource_path = ":/jsons/Genres.json"
 
-        # Open and read the resource using QFile and QTextStream
+        # Відкрити та прочитати ресурс з допомогою QFile та QTextStream
         file = QFile(resource_path)
         if file.open(QFile.ReadOnly | QFile.Text):
             stream = QTextStream(file)
-            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            stream.setCodec("UTF-8")  # Встановіть кодування UTF-8
             genres_data = json.loads(stream.readAll())
             genres = genres_data["genres"]
             file.close()
@@ -464,17 +417,8 @@ class _new_Watched_Film(MyWindowFormat):
         self.wind = GenreSelectionApp(genres)
         self.wind.setWindowModality(Qt.ApplicationModal)
         self.wind.show()
-        '''Старий формат считування json file 
-        with open(":/Genres.json", "r", encoding='utf-8') as file:
-            genres_data = json.load(file)
-            genres = genres_data["genres"]
 
-        self.wind = GenreSelectionApp(genres)
-        self.wind.setWindowModality(Qt.ApplicationModal)
-        self.wind.show()
-        '''
     def update_line_edit4(self):
-        #file = QFile(self.file_path)
         try:
             with open(self.file_path, 'r', encoding='utf-8') as file:
                 text_content = file.read()
@@ -483,7 +427,6 @@ class _new_Watched_Film(MyWindowFormat):
         except Exception as e:
             print(f"Error reading the file: {e}")
     def update_line_edit5(self):
-        #file1 = QFile(self.file_path1)
         try:
             with open(self.file_path1, 'r', encoding='utf-8') as file:
                 text_content = file.read()
@@ -499,16 +442,7 @@ class _new_Watched_Film(MyWindowFormat):
 
         except Exception as e:
             print(f"Error reading the file: {e}")
-        #__Формат для считування /qrc файлу
-        '''try:
-            with open(self.file_path2   , 'r', encoding='utf-8') as file:
-                text = file.read()
-                self.line_edit6.setPlainText(text)
-        except FileNotFoundError:
-            self.line_edit6.setPlainText("Файл не знайдено")
-        except Exception as e:
-            print("Exception in update_line_edit4:", e)
-            QMessageBox.critical(self, 'Помилка', f'Виникла помилка при оновленні вмісту:\n{str(e)}')'''
+
     def Rating_open(self):
         from ProgramPack.src.series_movie_rating import MovieRatingApp
 
@@ -525,15 +459,22 @@ class _new_Watched_Film(MyWindowFormat):
         try:
             # Підключення до бази даних PostgreSQL
             import psycopg2
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
-            # Getting text from QPlainTextEdit widgets
+            # Отримання тексту з віджетів QPlainTextEdit
             movie_name = self.line_edit1.text()
             genre = self.line_edit4.toPlainText()
             movie_rating = self.line_edit5.toPlainText()
@@ -542,10 +483,10 @@ class _new_Watched_Film(MyWindowFormat):
 
             if not movie_name or not  genre \
                     or not movie_rating or not age_restrictions or not movie_description or self.labelDate.text() == "":
-                # Show a modal message box
+                # Показати модальне вікно повідомлення
                 QMessageBox.critical(self, "Error", "Ви пропустили одне з полів!")
-                return  # Exit the function if any field is empty
-            # Check if any of the values are empty
+                return  # Вийти з функції, якщо будь-яке поле пусте
+            # Перевірте, чи жодне зі значень не порожнє
 
             # Виконання SQL-запиту для вставки даних
             cursor = conn.cursor()
@@ -555,7 +496,7 @@ class _new_Watched_Film(MyWindowFormat):
                 while True:
                     unique_id = random.randint(10000, 99999)
 
-                    # Check if the generated ID exists in the database
+                    # Перевірити, чи згенерований ідентифікатор існує в базі даних
                     cursor.execute("SELECT COUNT(*) FROM New_Watched_Film_List WHERE unique_id = %s", (unique_id,))
                     count = cursor.fetchone()[0]
 

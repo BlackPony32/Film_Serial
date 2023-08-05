@@ -3,3 +3,5 @@
 *.png
 *.jpg
 *.qrc
+*.env
+Image_resource_rc.py

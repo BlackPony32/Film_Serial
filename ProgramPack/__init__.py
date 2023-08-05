@@ -1,11 +1,7 @@
 # Файл __init__.py для пакету ProgramPack
-from ProgramPack.src.CustomLabelLine import CustomLabelLineEdit
-from ProgramPack.src.MainWindow import _MainWindow
-from ProgramPack.src.Add_new_Film import new_Film
-from ProgramPack.src.Add_new_Series import new_Series
-from ProgramPack.src.btn_action import open_new_Film
-from ProgramPack.src.FilmList import _FilmList
-from ProgramPack.src.SeriesList import _SeriesList
-from ProgramPack.src.watch_Film_later import _new_Film_later
-from ProgramPack.src.watch_Series_later import _new_Series_later
-from ProgramPack.src.New_Watched_Series import _new_Watched_Series
+from .Movies_module import new_Film, _FilmList, _new_Watched_Film, _new_Film_later,\
+    Watch_Film_later_List, _WatchedFilmList
+from .src import Age_MovieRatingApp, GenreSelectionApp, MyWindowFormat, _MainWindow, _MyButton,\
+    MovieRatingApp, DirectorsApp, ActorsApp
+from .Series_module import new_Series, _new_Watched_Series, _SeriesList, _new_Series_later,\
+    _Watched_Series_List, _Watch_Series_LaterList, SeriesSeasonSelection, _SeriesStatus

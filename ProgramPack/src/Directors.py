@@ -2,11 +2,10 @@ import os
 import sys
 import json
 
-from IPython.external.qt_for_kernel import QtGui
-from PyQt5.QtCore import QTextStream, QFile, QIODevice
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, QPushButton, \
-    QPlainTextEdit, QMessageBox, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout, QLabel, QCheckBox, \
+    QPlainTextEdit, QMessageBox, QLineEdit
 from ProgramPack.src.MyButton import _MyButton
 
 class DirectorsApp(QWidget):
@@ -27,7 +26,7 @@ class DirectorsApp(QWidget):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width
@@ -69,7 +68,7 @@ class DirectorsApp(QWidget):
             self.checkboxes.append(checkbox)
             grid_layout.addWidget(checkbox, row, col)
             col += 1
-            if col == 5:
+            if col == 6:
                 col = 0
                 row += 1
 
@@ -120,10 +119,7 @@ class DirectorsApp(QWidget):
         self.selected_genres_text_edit.setPlainText(genres_str)
 
     def add_selected_genres(self):
-        #file_name = "../my_data/data.txt"
-        #self.file_path = os.path.join(os.getcwd(), file_name)
         text_to_save = self.selected_genres_text_edit.toPlainText()
-        #self.file_name = ":/txt/data.txt"
 
         # Get the absolute path to the project's directory
         project_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -134,7 +130,6 @@ class DirectorsApp(QWidget):
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(text_to_save)
             self.close()
-            #QMessageBox.information(self, 'Success', 'Text saved successfully!')
 
         except Exception as e:
             print(f"Error writing to the file: {e}")

@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-from IPython.external.qt_for_kernel import QtGui
+from IPython.external.qt_for_kernel import QtGui, QtCore
 from PyQt5.QtGui import QIcon
 
 from ProgramPack.src.MyButton import _MyButton
@@ -27,7 +27,7 @@ class ActorsApp(QWidget):
         background-color: #9dadc7; /* Slightly off-white or light gray */}
             '''
         )
-
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)  # Заборона зміни розміру
         # Встановлюємо картинку як іконку вікна
 
         width = 32  # Desired width
@@ -58,7 +58,7 @@ class ActorsApp(QWidget):
             '''
         )
         self.search_input.setPlaceholderText("Пошук акторів")
-        self.search_input.textChanged.connect(self.filter_directors)
+        self.search_input.textChanged.connect(self.filter_actors)
         layout.addWidget(self.search_input)
 
         grid_layout = QGridLayout()
@@ -71,7 +71,7 @@ class ActorsApp(QWidget):
             self.checkboxes.append(checkbox)
             grid_layout.addWidget(checkbox, row, col)
             col += 1
-            if col == 7:
+            if col == 8:
                 col = 0
                 row += 1
 
@@ -122,16 +122,13 @@ class ActorsApp(QWidget):
         self.selected_genres_text_edit.setPlainText(genres_str)
 
     def add_selected_genres(self):
-        #file_name = "../my_data/data.txt"
-        #self.file_path = os.path.join(os.getcwd(), file_name)
         text_to_save = self.selected_genres_text_edit.toPlainText()
-        #self.file_name = ":/txt/data.txt"
 
-        # Get the absolute path to the project's directory
+        # Отримати абсолютний шлях до каталогу проекту
         project_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
         file_path = os.path.join(project_dir, "dataActors.txt")
 
-        # Open the file for writing and save the text
+        # Відкрийте файл для запису і збережіть текст
         try:
             with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(text_to_save)
@@ -142,7 +139,7 @@ class ActorsApp(QWidget):
             print(f"Error writing to the file: {e}")
             QMessageBox.critical(self, 'Error', f'Error saving text:\n{str(e)}')
 
-    def filter_directors(self):
+    def filter_actors(self):
         search_text = self.search_input.text().strip()
         for checkbox in self.checkboxes:
             director = checkbox.text()

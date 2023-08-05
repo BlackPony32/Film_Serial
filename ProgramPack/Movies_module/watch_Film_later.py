@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineEdit, QPlainTextEdit, QCalendarWidget, QMessageBox
 from PyQt5.QtGui import QFont
-from ProgramPack.src.MyButton import _MyButton
-from ProgramPack.src.MyWindowFormat import MyWindowFormat
+from ProgramPack.src import _MyButton, MyWindowFormat
 from PyQt5.QtCore import QDate, Qt, QFile, QTextStream
-
+import os
+from decouple import config
 
 class _new_Film_later(MyWindowFormat):
     def __init__(self):
@@ -14,12 +14,6 @@ class _new_Film_later(MyWindowFormat):
 
         self.center()
         self.initialize()
-
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
 
     def center(self):
         frame_geometry = self.frameGeometry()
@@ -35,7 +29,7 @@ class _new_Film_later(MyWindowFormat):
             }
             '''
         )
-        # Set the background image using a style sheet
+        # фонове зображення за допомогою таблиці стилів
         self.setStyleSheet(self.styleSheet())
 
         button1 = _MyButton(self)
@@ -91,20 +85,19 @@ class _new_Film_later(MyWindowFormat):
         button2.move(620, 600)
         button2.clicked.connect(self.insert_data)
 
-        # ___________________Лейбл про анегдот та поле для виводу випадкового анегдоту______________________________
+        # ___________________Лейбл про анегдот та поле для виводу випадкового анекдоту______________________________
         label0 = QLabel(self)
         labelAnec = QPlainTextEdit(self)
 
         label0.setFont(QFont("Arial", 15))
         label0.setStyleSheet("color: lightgray")
-        label0.setText("Невеликий анегдот на тематику фільмів (згенеровано АІ)")
+        label0.setText("Невеликий анекдот на тематику фільмів (згенеровано АІ)")
         label0.setFixedSize(795, 30)
         label0.move(45, 15)
 
         self.generate_random_anecdote()
         random_joke = self.generate_random_anecdote()
 
-        labelAnec.setFont(QFont("Arial", 15))
         labelAnec.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -125,21 +118,19 @@ class _new_Film_later(MyWindowFormat):
         labelAnec.setFixedSize(930, 70)
         labelAnec.move(45, 45)
 
-        # ______________Назва фільма і поле для вводу назви_________________
-        self.line_edit1 = QLineEdit(self)
+        # ______________Назва фільму і поле для вводу назви_________________
         label1 = QLabel(self)
         label2 = QLabel(self)
-        self.line_edit3 = QPlainTextEdit(self)
         label3 = QLabel(self)
 
         label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: lightgray")
-        label1.setText("Назва фільма")
+        label1.setText("Назва фільму")
         label1.setFixedSize(200, 30)
         label1.move(45, 120)
 
-        self.line_edit1.setPlaceholderText("Введіть назву фільма")
-        self.line_edit1.setFont(QFont("Arial", 13))
+        self.line_edit1 = QLineEdit(self)
+        self.line_edit1.setPlaceholderText("Введіть назву фільму")
         self.line_edit1.setStyleSheet(
             '''
             QLineEdit {
@@ -174,19 +165,17 @@ class _new_Film_later(MyWindowFormat):
 
         self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання")
-        self.buttonDate.setFont(QFont("Arial", 14))
         self.buttonDate.setFixedSize(250, 45)
         self.buttonDate.move(45, 205)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
-        # _______________________Блок опису фільма____________________________________________
+        # _______________________Блок опису фільму____________________________________________
         label3.setFont(QFont("Arial", 15))
         label3.setStyleSheet("color: lightgray")
         label3.setText("Короткий опис")
         label3.setFixedSize(250, 30)
         label3.move(45, 265)
-
+        self.line_edit3 = QPlainTextEdit(self)
         self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по фільму")
-        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -217,26 +206,26 @@ class _new_Film_later(MyWindowFormat):
             from IPython.external.qt_for_kernel import QtGui
             self.calendar = QCalendarWidget()
             icon = QIcon(":/images/MovieIcon.jpg")
-
             # Встановлюємо картинку як іконку вікна
 
-            width = 32  # Desired width
-            height = 32  # Desired height
+            width = 32  # Бажана ширина
+            height = 32  # Бажана висота
             resized_icon = icon.pixmap(width, height).scaled(width, height)
 
-            # Set the resized icon as the taskbar icon for the main window
+            # Встановіть піктограму зміненого розміру як піктограму панелі завдань для головного вікна
 
             # self.calendar.setWindowModality(Qt.ApplicationModal)
-            self.calendar = QCalendarWidget()
+
             self.calendar.setWindowModality(Qt.ApplicationModal)
             self.calendar.clicked.connect(self.select_date)
 
             self.widget = QWidget()
+            self.widget.setWindowTitle("Оберіть дату додавання фільму")
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
-            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
             self.widget.setLayout(layout)
-            self.widget.setGeometry(200, 200, 300, 200)
+            self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
+            self.widget.setGeometry(200, 200, 450, 200)
             self.widget.show()
         except Exception as e:
             print("Exception in show_calendar:", e)
@@ -269,11 +258,11 @@ class _new_Film_later(MyWindowFormat):
         import Image_resource_rc
         resource_path = ":/jsons/Filmanecdotes.json"
 
-        # Open and read the resource using QFile and QTextStream
+        # Відкрити та прочитати ресурс з допомогою QFile та QTextStream
         file = QFile(resource_path)
         if file.open(QFile.ReadOnly | QFile.Text):
             stream = QTextStream(file)
-            stream.setCodec("UTF-8")  # Set the encoding to UTF-8
+            stream.setCodec("UTF-8")  # Встановіть кодування UTF-8
             anecdotes = json.loads(stream.readAll())
             file.close()
         random_anecdote = random.choice(anecdotes)
@@ -283,12 +272,19 @@ class _new_Film_later(MyWindowFormat):
         try:
             # Підключення до бази даних PostgreSQL
             import psycopg2
+            # Зчитуємо значення змінних середовища
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
             # Getting text from QPlainTextEdit widgets
@@ -314,7 +310,7 @@ class _new_Film_later(MyWindowFormat):
                 while True:
                     unique_id = random.randint(10000, 99999)
 
-                    # Check if the generated ID exists in the database
+                    # Перевірити, чи згенерований ідентифікатор існує в базі даних
                     cursor.execute("SELECT COUNT(*) FROM Movie_later_list WHERE unique_id = %s", (unique_id,))
                     count = cursor.fetchone()[0]
 

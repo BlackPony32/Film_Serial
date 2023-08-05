@@ -1,13 +1,11 @@
 import json
 import os
-
+from decouple import config
 from PyQt5.QtCore import Qt, QDate, QFileSystemWatcher, QFile, QTextStream
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QDesktopWidget, QLabel, QLineEdit, \
     QMessageBox, QCalendarWidget, QPlainTextEdit
 from PyQt5.QtGui import QFont
-from ProgramPack.src.MyButton import _MyButton
-from ProgramPack.src.MyWindowFormat import MyWindowFormat
-
+from ProgramPack.src import _MyButton, MyWindowFormat
 
 class _new_Watched_Series(MyWindowFormat):
     def __init__(self):
@@ -18,12 +16,6 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.center()
         self.initialize()
-
-    def paintEvent(self, event):
-        for button in self.findChildren(_MyButton):  # Отримати всі кнопки MyButton
-            button.paintEvent(event)  # Викликати метод paintEvent для кожної кнопки
-
-        super().paintEvent(event)  # Викликати метод paintEvent вікна MainWindow
 
     def center(self):
         frame_geometry = self.frameGeometry()
@@ -39,11 +31,7 @@ class _new_Watched_Series(MyWindowFormat):
             }
             '''
         )
-
         # Set the background image using a style sheet
-
-        #font = QFont()
-        #font.setPointSize(15)  # Встановлюємо розмір тексту кнопки
 
         # _____________Основні кнопки для переходу по сторінках і збереження даних в базу___________
         button1 = _MyButton(self)
@@ -99,7 +87,7 @@ class _new_Watched_Series(MyWindowFormat):
         button2.move(620, 650)
         button2.clicked.connect(self.insert_data)
 
-        # ______________Назва серіала і поле для вводу назви_________________
+        # ______________Назва серіалу і поле для вводу назви_________________
         self.line_edit1 = QLineEdit(self)
         self.line_edit1.setStyleSheet(
             '''
@@ -122,18 +110,18 @@ class _new_Watched_Series(MyWindowFormat):
 
         label1.setFont(QFont("Arial", 15))
         label1.setStyleSheet("color: lightgray")
-        label1.setText("Назва серіала")
+        label1.setText("Назва серіалу")
         label1.setFixedSize(200, 30)
         label1.move(45, 5)
 
-        self.line_edit1.setPlaceholderText("Введіть назву серіала")
+        self.line_edit1.setPlaceholderText("Введіть назву серіалу")
         self.line_edit1.setFixedSize(685, 50)
         self.line_edit1.move(290, 5)
 
         # ___________________Блок додавання дати_____________________________________________
         label2.setFont(QFont("Arial", 15))
         label2.setStyleSheet("color: lightgray")
-        label2.setText("Оберіть дату додавання серіала")
+        label2.setText("Оберіть дату додавання серіалу")
         label2.setFixedSize(570, 30)
         label2.move(45, 55)
 
@@ -147,9 +135,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonDate = _MyButton(self)
         self.buttonDate.setText("Дата додавання серіала")
-        self.buttonDate.setFont(QFont("Arial", 13))
         self.buttonDate.setFixedSize(300, 45)
-        # self.buttonDate.start_animation()
         self.buttonDate.move(45, 85)
         self.buttonDate.clicked.connect(self.buttonDateClicked)
         # ___________________Блок кількості сезонів_____________________________________________
@@ -176,22 +162,20 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonCount = _MyButton(self)
         self.buttonCount.setText("Кількість сезонів: ")
-        #self.buttonCount.setFont(QFont("Arial", 13))
         self.buttonCount.setFixedSize(290, 45)
-        # self.buttonCount.start_animation()
         self.buttonCount.move(550, 85)
         self.buttonCount.clicked.connect(self.Season_Quantity_open)
-        # _______________________________Статус серіала________________________________
+        # _______________________________Статус серіалу________________________________
         label7 = QLabel(self)
 
         label7.setFont(QFont("Arial", 15))
         label7.setStyleSheet("color: lightgray")
-        label7.setText("Оберіть статус серіала")
+        label7.setText("Оберіть статус серіалу")
         label7.setFixedSize(280, 30)
         label7.move(45, 135)
 
         self.line_edit7 = QPlainTextEdit(self)
-        self.line_edit7.setPlaceholderText("Запишіть статус серіала самостійно або оберіть з доступних")
+        self.line_edit7.setPlaceholderText("Запишіть статус серіалу самостійно або оберіть з доступних")
         self.file_name3 = "Series_Status.txt"
         self.file_path3 = os.path.join(os.getcwd(), self.file_name3)
 
@@ -221,7 +205,6 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonStatus = _MyButton(self)
         self.buttonStatus.setText("Статус серіала")
-        #self.buttonStatus.setFont(QFont("Arial", 9))
         self.buttonStatus.setFixedSize(280, 55)
         self.buttonStatus.move(45, 270)
         self.buttonStatus.clicked.connect(self.Status_open)
@@ -265,7 +248,6 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonTemp = _MyButton(self)
         self.buttonTemp.setText("Доступний вибір режисерів")
-        #self.buttonTemp.setFont(QFont("Arial", 9))
         self.buttonTemp.setFixedSize(280, 55)
         self.buttonTemp.move(370, 270)
         self.buttonTemp.clicked.connect(self.Directors_open)
@@ -310,7 +292,6 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonTemp2 = _MyButton(self)
         self.buttonTemp2.setText("Список доступних акторів")
-        #self.buttonTemp2.setFont(QFont("Arial", 9))
         self.buttonTemp2.setFixedSize(280, 55)
         self.buttonTemp2.move(690, 270)
         self.buttonTemp2.clicked.connect(self.Actors_open)
@@ -321,12 +302,12 @@ class _new_Watched_Series(MyWindowFormat):
 
         label4.setFont(QFont("Arial", 15))
         label4.setStyleSheet("color: lightgray")
-        label4.setText("Оберіть жанр серіала")
+        label4.setText("Оберіть жанр серіалу")
         label4.setFixedSize(280, 30)
         label4.move(45, 345)
 
         self.line_edit4 = QPlainTextEdit(self)
-        self.line_edit4.setPlaceholderText("Запишіть жанр серіала самостійно або оберіть з доступних")
+        self.line_edit4.setPlaceholderText("Запишіть жанр серіалу самостійно або оберіть з доступних")
         self.file_name = "data.txt"
         self.file_path = os.path.join(os.getcwd(), self.file_name)
 
@@ -356,9 +337,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonGanre = _MyButton(self)
         self.buttonGanre.setText("Доступні жанри")
-        #self.buttonGanre.setFont(QFont("Arial", 9))
         self.buttonGanre.setFixedSize(280, 55)
-        # self.buttonGanre.start_animation()
         self.buttonGanre.move(45, 480)
         self.buttonGanre.clicked.connect(self.Genres_open)
 
@@ -380,7 +359,6 @@ class _new_Watched_Series(MyWindowFormat):
         self.file_watcher1.addPath(self.file_path1)
         self.file_watcher1.fileChanged.connect(self.update_line_edit5)
 
-        self.line_edit5.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit5.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -401,9 +379,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonRating = _MyButton(self)
         self.buttonRating.setText("Доступна система оцінювання")
-        #self.buttonRating.setFont(QFont("Arial", 9))
         self.buttonRating.setFixedSize(280, 55)
-        # self.buttonRating.start_animation()
         self.buttonRating.move(370, 480)
         self.buttonRating.clicked.connect(self.Rating_open)
 
@@ -426,7 +402,6 @@ class _new_Watched_Series(MyWindowFormat):
         self.file_watcher2.addPath(self.file_path2)
         self.file_watcher2.fileChanged.connect(self.update_line_edit6)
 
-        self.line_edit6.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit6.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -447,9 +422,7 @@ class _new_Watched_Series(MyWindowFormat):
 
         self.buttonAge = _MyButton(self)
         self.buttonAge.setText("Доступна система рейтингу")
-        #self.buttonAge.setFont(QFont("Arial", 9))
         self.buttonAge.setFixedSize(280, 55)
-        # self.buttonAge.start_animation()
         self.buttonAge.move(690, 480)
         self.buttonAge.clicked.connect(self.Age_Rating_open)
 
@@ -464,7 +437,6 @@ class _new_Watched_Series(MyWindowFormat):
         label3.move(45, 555)
 
         self.line_edit3.setPlaceholderText("Додайте короткий опис чи замітки по серіалу")
-        self.line_edit3.setFont(QFont("Arial", 9))  # 13 норм розмір
         self.line_edit3.setStyleSheet(
             '''
             QPlainTextEdit {
@@ -502,7 +474,6 @@ class _new_Watched_Series(MyWindowFormat):
             from IPython.external.qt_for_kernel import QtGui
             self.calendar = QCalendarWidget()
             icon = QIcon(":/images/MovieIcon.jpg")
-
             # Встановлюємо картинку як іконку вікна
 
             width = 32  # Desired width
@@ -515,11 +486,12 @@ class _new_Watched_Series(MyWindowFormat):
             self.calendar.clicked.connect(self.select_date)
 
             self.widget = QWidget()
+            self.widget.setWindowTitle("Оберіть дату додавання серіалу")
             layout = QVBoxLayout()
             layout.addWidget(self.calendar)
             self.widget.setLayout(layout)
             self.widget.setWindowIcon(QtGui.QIcon(resized_icon))
-            self.widget.setGeometry(200, 200, 300, 200)
+            self.widget.setGeometry(200, 200, 450, 200)
             self.widget.show()
         except Exception as e:
             print("Exception in show_calendar:", e)
@@ -564,7 +536,6 @@ class _new_Watched_Series(MyWindowFormat):
     def Directors_open(self):
         from ProgramPack.src.Directors import DirectorsApp
         resource_path = ":/jsons/_Directors.json"
-
         # Open and read the resource using QFile and QTextStream
         file = QFile(resource_path)
         if file.open(QFile.ReadOnly | QFile.Text):
@@ -627,16 +598,6 @@ class _new_Watched_Series(MyWindowFormat):
 
         except Exception as e:
             print(f"Error reading the file: {e}")
-        #__Формат для считування /qrc файлу
-        '''try:
-            with open(self.file_path2   , 'r', encoding='utf-8') as file:
-                text = file.read()
-                self.line_edit6.setPlainText(text)
-        except FileNotFoundError:
-            self.line_edit6.setPlainText("Файл не знайдено")
-        except Exception as e:
-            print("Exception in update_line_edit4:", e)
-            QMessageBox.critical(self, 'Помилка', f'Виникла помилка при оновленні вмісту:\n{str(e)}')'''
     def update_line_edit7(self):
         try:
             with open(self.file_path3, 'r', encoding='utf-8') as file:
@@ -683,12 +644,18 @@ class _new_Watched_Series(MyWindowFormat):
         try:
             # Підключення до бази даних PostgreSQL
             import psycopg2
+            db_host = config('DB_HOST')
+            db_port = config('DB_PORT')
+            db_name = config('DB_NAME')
+            db_user = config('DB_USER')
+            db_password = config('DB_PASSWORD')
+            # Підключення до бази даних PostgreSQL
             conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                database="Film_Series",
-                user="postgres",
-                password="postgresql"
+                host=db_host,
+                port=db_port,
+                database=db_name,
+                user=db_user,
+                password=db_password
             )
 
             # Getting text from QPlainTextEdit widgets
